@@ -4,12 +4,11 @@ A c++ raycasting engine made with SFML
 
 ## Current State 
 
-2D raycaster for FOV visualisation  
+A simple raycasting engine for an entextured 3d projection 
 
 ## To-do
 
 ###### Raycasting 
-- 3D projection
 - Add thin walls
 - Add doors
 - Add textured wall 

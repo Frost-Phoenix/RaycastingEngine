@@ -22,7 +22,8 @@ class Game
         std::shared_ptr<MapManager> mapManager;
 
         // Raycating engine
-        RayCasting rayCastingEngine;
+        std::unique_ptr<RayCasting> rayCastingEngine;
+        bool drawMap;
 
         // Private functions
         void initWindow();

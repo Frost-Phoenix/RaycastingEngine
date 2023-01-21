@@ -31,8 +31,13 @@ void Game::initWindow()
 
 void Game::initVariables()
 {
+    // this->drawMap = true;
+    this->drawMap = false;
+    
     this->player = std::unique_ptr<Player>(new Player());
     this->mapManager = std::shared_ptr<MapManager>(new MapManager());
+
+    this->rayCastingEngine = std::unique_ptr<RayCasting>(new RayCasting(drawMap=this->drawMap));
 }
 
 void Game::pollEvents()
@@ -57,7 +62,7 @@ void Game::drawMiniMap()
     // miniMap.setViewport(sf::FloatRect(0.f, 0.f, 0.2f, 0.2f));
     // this->window->setView(miniMap);
     
-    this->rayCastingEngine.renderFovVisualisation(this->window);
+    this->rayCastingEngine->renderFovVisualisation(this->window);
     this->player->render(this->window);
     this->mapManager->render(this->window);
 
@@ -79,7 +84,7 @@ void Game::update()
     if (this->isRunning())
     {
         this->player->update(this->mapManager);
-        this->rayCastingEngine.update(this->mapManager, this->player->getCenterPos(), this->player->getAngle());
+        this->rayCastingEngine->update(this->mapManager, this->player->getCenterPos(), this->player->getAngle());
     }
 }
 
@@ -89,9 +94,14 @@ void Game::render()
     {
         this->window->clear(sf::Color(20, 20, 20));
 
-        // this->rayCastingEngine.render(this->window);
-
-        this->drawMiniMap();
+        if (this->drawMap)
+        {
+            this->drawMiniMap();
+        }
+        else
+        {
+            this->rayCastingEngine->render(this->window);
+        }
 
         this->window->display();
     }

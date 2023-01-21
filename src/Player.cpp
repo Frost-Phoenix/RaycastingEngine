@@ -24,8 +24,8 @@ void Player::initVariables()
 {
     this->rotation = 270;
 
-    this->moveSpeed = 3;
-    this->rotationSpeed = 3;
+    this->moveSpeed = 2;
+    this->rotationSpeed = 2;
 }
 
 void Player::checkInputs()
