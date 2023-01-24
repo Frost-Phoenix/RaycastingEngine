@@ -19,11 +19,12 @@ void Game::initWindow()
 {
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;
+    
     sf::VideoMode videoMode;
     videoMode.width = SCREEN_WIDTH;
     videoMode.height = SCREEN_HEIGHT;
-    this->window = std::shared_ptr<sf::RenderWindow>(new sf::RenderWindow(videoMode, "Game", sf::Style::Titlebar | sf::Style::Close, settings)); 
-    // this->window = std::shared_ptr<sf::RenderWindow>(new sf::RenderWindow(videoMode, "Game", sf::Style::Titlebar | sf::Style::Close)); 
+    
+    this->window = std::shared_ptr<sf::RenderWindow>(new sf::RenderWindow(videoMode, "Game", sf::Style::Titlebar | sf::Style::Close, settings));
 
     this->window->setVerticalSyncEnabled(false);
     this->window->setFramerateLimit(60);
@@ -31,13 +32,15 @@ void Game::initWindow()
 
 void Game::initVariables()
 {
-    // this->drawMap = true;
-    this->drawMap = false;
+    this->drawMap = true;
+    // this->drawMap = false;
     
-    this->player = std::unique_ptr<Player>(new Player());
+    this->player = std::shared_ptr<Player>(new Player());
     this->mapManager = std::shared_ptr<MapManager>(new MapManager());
 
     this->rayCastingEngine = std::unique_ptr<RayCasting>(new RayCasting(drawMap=this->drawMap));
+
+    this->mapManager->loadMap(this->player);
 }
 
 void Game::pollEvents()
@@ -54,6 +57,13 @@ void Game::pollEvents()
 void Game::updateDeltaTime()
 {
     this->window->setTitle("Game - " + std::to_string(static_cast<int>(1000000 / this->clock.restart().asMicroseconds())) + " fps");
+}
+
+void Game::moveCamera()
+{
+    sf::View view = this->window->getView();
+    view.setCenter(this->player->getCenterPos());
+    this->window->setView(view);
 }
 
 void Game::drawMiniMap()
@@ -96,6 +106,7 @@ void Game::render()
 
         if (this->drawMap)
         {
+            this->moveCamera();
             this->drawMiniMap();
         }
         else

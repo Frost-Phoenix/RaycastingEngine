@@ -14,7 +14,7 @@ int main()
         // Render
         game->render();   
     }
-
     
+
     return EXIT_SUCCESS;
 }

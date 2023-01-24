@@ -17,7 +17,7 @@ void Player::initSprite()
 {
     this->sprite.setRadius(10.f);
     this->sprite.setFillColor(sf::Color(125, 125, 125));
-    this->sprite.setPosition(sf::Vector2f(200.f, 300.f));
+    this->sprite.setPosition(sf::Vector2f(440.f, 320.f));
 }
 
 void Player::initVariables()
@@ -124,6 +124,12 @@ const short Player::getAngle() const
 }
 
 // Public functions
+void Player::setCenterPos(sf::Vector2f pos)
+{
+    sf::FloatRect playerHitbox = this->sprite.getGlobalBounds();
+    this->sprite.setPosition(pos.x - (playerHitbox.width / 2), pos.y - (playerHitbox.height / 2));
+}
+
 void Player::update(std::shared_ptr<MapManager> mapManager)
 {
     this->checkInputs();

@@ -41,6 +41,8 @@ class Player
         const short getAngle() const;
 
         // Public functions
+        void setCenterPos(sf::Vector2f pos);
+        
         void update(std::shared_ptr<MapManager> mapManager);
         void render(std::shared_ptr<sf::RenderTarget> renderTarget);
 };

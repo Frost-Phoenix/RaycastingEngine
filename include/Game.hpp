@@ -18,7 +18,7 @@ class Game
         sf::Clock clock;
 
         // Player / MapManager
-        std::unique_ptr<Player> player;
+        std::shared_ptr<Player> player;
         std::shared_ptr<MapManager> mapManager;
 
         // Raycating engine
@@ -32,6 +32,7 @@ class Game
         void pollEvents();
         void updateDeltaTime();
 
+        void moveCamera();
         void drawMiniMap();
 
     public:

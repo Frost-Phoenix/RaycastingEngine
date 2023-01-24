@@ -4,8 +4,8 @@
 
 
 #define CELL_SIZE 32
-#define MAP_WIDTH 20
-#define MAP_HEIGHT 15
+// #define MAP_WIDTH 20
+// #define MAP_HEIGHT 15
 #define SCREEN_WIDTH  900
 #define SCREEN_HEIGHT 500
 

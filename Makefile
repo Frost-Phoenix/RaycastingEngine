@@ -4,7 +4,7 @@ compile:
 	if exist *.o (del *.o)
 	if exist bin\main.exe (del bin\main.exe)
 	if exist src\tempCodeRunnerFile.cpp (del src\tempCodeRunnerFile.cpp)
-	g++ -c src/*.cpp -I"include" -I"include\pch" -I"C:\2.Perso\Programation\C++\.Libraries\SFML-2.5.1\include"
+	g++ -c src/*.cpp include\lib\jsoncpp.cpp -I"include" -I"include\lib" -I"include\pch" -I"C:\2.Perso\Programation\C++\.Libraries\SFML-2.5.1\include"
 	g++ *.o -o bin\main -L"C:\2.Perso\Programation\C++\.Libraries\SFML-2.5.1\lib" -lsfml-graphics -lsfml-window -lsfml-system 
 	del *.o 
 
@@ -17,7 +17,7 @@ static:
 	del *.o 
 
 pch:
-	g++ include\pch\pch.hpp -I"C:\2.Perso\Programation\C++\.Libraries\SFML-2.5.1\include" 
+	g++ include\pch\pch.hpp -I"include\lib" -I"C:\2.Perso\Programation\C++\.Libraries\SFML-2.5.1\include" 
 
 class:
 	python creat_class.py

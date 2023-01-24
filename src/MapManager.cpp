@@ -6,7 +6,6 @@ MapManager::MapManager()
 {
     this->initSprite();
     this->initVariables();
-    this->loadMapFromImage();
 }
 
 MapManager::~MapManager()
@@ -25,22 +24,34 @@ void MapManager::initSprite()
 
 void MapManager::initVariables()
 {
-    
+    this->mapHeight = 0;
+    this->mapWidth = 0;
 }
 
-void MapManager::loadMapFromImage()
+void MapManager::loadMapFromJson(std::shared_ptr<Player> player)
 {
-    sf::Image mapSketch;
-    mapSketch.loadFromFile("data/images/map.png");
+    // std::ifstream jsFile("data/map/level0.json");
+    std::ifstream jsFile("data/map/testLevel.json");
+    Json::Value jsonReader;
+    Json::Reader reader;
 
-    for (unsigned char row = 0; row < MAP_HEIGHT; row++)
+    reader.parse(jsFile, jsonReader);
+
+    this->mapHeight = static_cast<short>(jsonReader["height"].asInt());
+    this->mapWidth = static_cast<short>(jsonReader["layers"][0]["data"].size() / this->mapHeight);
+    
+    for (unsigned char i = 0; i < 3; i++)
     {
-        for (unsigned char col = 0; col < MAP_WIDTH; col++)
-        {
-            sf::Color pixelColor = mapSketch.getPixel(col, row);
+        Json::Value layer = jsonReader["layers"][i];
+        std::string layerName = layer["name"].asString();
+        this->map[layerName].resize(this->mapHeight);
 
-            if (pixelColor == sf::Color(0, 0, 0)) this->map[row][col] = 1;
-            else this->map[row][col] = 0;
+        for (unsigned short row = 0; row < this->mapHeight; row++)
+        {
+            for (unsigned short col = 0; col < this->mapWidth; col++)
+            {
+                this->map[layerName][row].push_back(static_cast<short>(layer["data"][row * this->mapWidth + col].asInt()));
+            }
         }
     }
 }
@@ -52,10 +63,10 @@ bool MapManager::chekPointCollision(sf::Vector2f pos)
     sf::Vector2i cellPos(static_cast<int>(pos.x / CELL_SIZE), static_cast<int>(pos.y / CELL_SIZE));
 
     // If cellPos in map 
-    if (0 <= cellPos.x && MAP_WIDTH > cellPos.x && 0 <= cellPos.y && MAP_HEIGHT > cellPos.y)
+    if (0 <= cellPos.x && this->mapWidth > cellPos.x && 0 <= cellPos.y && this->mapHeight > cellPos.y)
     {
         // If cellPos is an non walkable cell
-        if (this->map[cellPos.y][cellPos.x] == 1) return true;
+        if (this->map["walls"][cellPos.y][cellPos.x] == 1) return true;
     }
 
     return false;
@@ -131,13 +142,18 @@ sf::Vector2f MapManager::getNewPosition(sf::Vector2f nextPos, sf::Vector2f curre
 }
 
 // Public functions
+void MapManager::loadMap(std::shared_ptr<Player> player)
+{
+    this->loadMapFromJson(player);
+}
+
 void MapManager::renderMap(std::shared_ptr<sf::RenderTarget> renderTarget)
 {
-    for (unsigned char row = 0; row < MAP_HEIGHT; row++)
+    for (unsigned char row = 0; row < this->mapHeight; row++)
     {
-        for (unsigned char col = 0; col < MAP_WIDTH; col++)
+        for (unsigned char col = 0; col < this->mapWidth; col++)
         {
-            if (this->map[row][col] == 1)
+            if (this->map["walls"][row][col] == 1)
             {
                 this->cellSprite.setPosition(sf::Vector2f(col * CELL_SIZE, row * CELL_SIZE));
                 renderTarget->draw(this->cellSprite);
