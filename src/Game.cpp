@@ -32,8 +32,8 @@ void Game::initWindow()
 
 void Game::initVariables()
 {
-    this->drawMap = true;
-    // this->drawMap = false;
+    // this->drawMap = true;
+    this->drawMap = false;
     
     this->player = std::shared_ptr<Player>(new Player());
     this->mapManager = std::shared_ptr<MapManager>(new MapManager());
@@ -106,7 +106,7 @@ void Game::render()
 
         if (this->drawMap)
         {
-            this->moveCamera();
+            // this->moveCamera();
             this->drawMiniMap();
         }
         else

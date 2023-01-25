@@ -17,7 +17,6 @@ void Player::initSprite()
 {
     this->sprite.setRadius(10.f);
     this->sprite.setFillColor(sf::Color(125, 125, 125));
-    this->sprite.setPosition(sf::Vector2f(440.f, 320.f));
 }
 
 void Player::initVariables()

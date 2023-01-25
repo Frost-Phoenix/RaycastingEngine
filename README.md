@@ -8,17 +8,17 @@ A simple raycasting engine for an entextured 3d projection
 
 ## To-do
 
-###### Raycasting 
+#### Raycasting 
 - Add thin walls
 - Add doors
 - Add textured wall 
 - Add sprites  
 - Add enimies 
 
-###### Map
-- Change map system (load / storing data)
-- Make map load system compatible with Tiled maps editor
+#### Map
+- ~~Change map system (load / storing data)~~
+- ~~Make map load system compatible with Tiled maps editor~~
 
-###### Other
+#### Other
 - Improve movement feels
 - Add mouse controlle

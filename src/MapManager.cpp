@@ -4,7 +4,7 @@
 // Constructor
 MapManager::MapManager()
 {
-    this->initSprite();
+    this->initSprites();
     this->initVariables();
 }
 
@@ -14,12 +14,15 @@ MapManager::~MapManager()
 }
 
 // Private functions
-void MapManager::initSprite()
+void MapManager::initSprites()
 {
-    this->cellTexture.loadFromFile("data/images/cell.png");
-    this->cellSprite.setTexture(this->cellTexture);
-    this->emptyCellTexture.loadFromFile("data/images/empty_cell.png");
-    this->emptyCellSprite.setTexture(this->emptyCellTexture);
+    this->wallCellTexture.loadFromFile("data/images/map_cells/wall.png");
+    this->verticalDoorCellTexture.loadFromFile("data/images/map_cells/vertical_door.png");
+    this->horizontalDoorCellTexture.loadFromFile("data/images/map_cells/horizontal_door.png");
+    
+    this->wallCellSprite.setTexture(wallCellTexture);
+    this->verticalDoorCellSprite.setTexture(verticalDoorCellTexture);
+    this->horizontalDoorCellSprite.setTexture(horizontalDoorCellTexture);
 }
 
 void MapManager::initVariables()
@@ -30,8 +33,7 @@ void MapManager::initVariables()
 
 void MapManager::loadMapFromJson(std::shared_ptr<Player> player)
 {
-    // std::ifstream jsFile("data/map/level0.json");
-    std::ifstream jsFile("data/map/testLevel.json");
+    std::ifstream jsFile("data/map/level_test.json");
     Json::Value jsonReader;
     Json::Reader reader;
 
@@ -40,9 +42,8 @@ void MapManager::loadMapFromJson(std::shared_ptr<Player> player)
     this->mapHeight = static_cast<short>(jsonReader["height"].asInt());
     this->mapWidth = static_cast<short>(jsonReader["layers"][0]["data"].size() / this->mapHeight);
     
-    for (unsigned char i = 0; i < 3; i++)
+    for (Json::Value& layer : jsonReader["layers"])
     {
-        Json::Value layer = jsonReader["layers"][i];
         std::string layerName = layer["name"].asString();
         this->map[layerName].resize(this->mapHeight);
 
@@ -50,7 +51,17 @@ void MapManager::loadMapFromJson(std::shared_ptr<Player> player)
         {
             for (unsigned short col = 0; col < this->mapWidth; col++)
             {
-                this->map[layerName][row].push_back(static_cast<short>(layer["data"][row * this->mapWidth + col].asInt()));
+                if (layerName != "player")
+                {
+                    this->map[layerName][row].push_back(static_cast<short>(layer["data"][row * this->mapWidth + col].asInt()));
+                }
+                else
+                {
+                    if (layer["data"][row * this->mapWidth + col].asInt() == 7)
+                    {
+                        player->setCenterPos(sf::Vector2f(col * CELL_SIZE + CELL_SIZE / 2, row * CELL_SIZE + CELL_SIZE / 2));
+                    }
+                }
             }
         }
     }
@@ -66,7 +77,7 @@ bool MapManager::chekPointCollision(sf::Vector2f pos)
     if (0 <= cellPos.x && this->mapWidth > cellPos.x && 0 <= cellPos.y && this->mapHeight > cellPos.y)
     {
         // If cellPos is an non walkable cell
-        if (this->map["walls"][cellPos.y][cellPos.x] == 1) return true;
+        if (this->map["walls"][cellPos.y][cellPos.x] != 0) return true;
     }
 
     return false;
@@ -153,16 +164,26 @@ void MapManager::renderMap(std::shared_ptr<sf::RenderTarget> renderTarget)
     {
         for (unsigned char col = 0; col < this->mapWidth; col++)
         {
-            if (this->map["walls"][row][col] == 1)
+            switch (this->map["walls"][row][col])
             {
-                this->cellSprite.setPosition(sf::Vector2f(col * CELL_SIZE, row * CELL_SIZE));
-                renderTarget->draw(this->cellSprite);
+                case 1:
+                    this->wallCellSprite.setPosition(sf::Vector2f(col * CELL_SIZE, row * CELL_SIZE));
+                    renderTarget->draw(this->wallCellSprite);
+                    break;
+
+                case 2:
+                    this->horizontalDoorCellSprite.setPosition(sf::Vector2f(col * CELL_SIZE, row * CELL_SIZE));
+                    renderTarget->draw(this->horizontalDoorCellSprite);
+                    break;
+
+                case 3:
+                    this->verticalDoorCellSprite.setPosition(sf::Vector2f(col * CELL_SIZE, row * CELL_SIZE));
+                    renderTarget->draw(this->verticalDoorCellSprite);
+                    break;
+                
+                default:
+                    break;
             }
-            // else if (this->map[row][col] == 0)
-            // {
-            //     this->emptyCellSprite.setPosition(sf::Vector2f(col * CELL_SIZE, row * CELL_SIZE));
-            //     renderTarget->draw(this->emptyCellSprite);   
-            // }
         }
     }
 }

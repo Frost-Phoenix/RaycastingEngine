@@ -2,6 +2,7 @@
 
 #include "pch.hpp"
 #include "Utils.hpp"
+#include "Player.hpp"
 
 // Ne peut pas metre #includde "Player.hpp" car sinon le compileur tourne en rond dans les include (donc erreur)
 // car MapManager inclue Player et Player inclue MapManager
@@ -9,15 +10,21 @@ class Player;
 
 #define MAP_AS_JSON
 
+#define MAP_WALL_ID
+
 
 class MapManager
 {
     private:
+        // Textures
+        sf::Texture wallCellTexture;
+        sf::Texture verticalDoorCellTexture;
+        sf::Texture horizontalDoorCellTexture;
+        
         // Sprite
-        sf::Texture cellTexture;
-        sf::Sprite cellSprite;
-        sf::Texture emptyCellTexture;
-        sf::Sprite emptyCellSprite;
+        sf::Sprite wallCellSprite;
+        sf::Sprite verticalDoorCellSprite;
+        sf::Sprite horizontalDoorCellSprite;
 
         // Variables
         std::map<std::string, std::vector<std::vector<unsigned short>>> map;
@@ -25,7 +32,7 @@ class MapManager
         unsigned short mapWidth;
 
         // Private functions
-        void initSprite();
+        void initSprites();
         void initVariables();
 
         void loadMapFromJson(std::shared_ptr<Player> player);

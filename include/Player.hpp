@@ -4,6 +4,7 @@
 #include "Utils.hpp"
 #include "MapManager.hpp"
 
+class MapManager;
 
 class Player
 {
