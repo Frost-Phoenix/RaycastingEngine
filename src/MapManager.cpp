@@ -40,7 +40,7 @@ void MapManager::loadMapFromJson(std::shared_ptr<Player> player)
     reader.parse(jsFile, jsonReader);
 
     this->mapHeight = static_cast<short>(jsonReader["height"].asInt());
-    this->mapWidth = static_cast<short>(jsonReader["layers"][0]["data"].size() / this->mapHeight);
+    this->mapWidth = static_cast<short>(jsonReader["width"].asInt());
     
     for (Json::Value& layer : jsonReader["layers"])
     {
@@ -68,6 +68,29 @@ void MapManager::loadMapFromJson(std::shared_ptr<Player> player)
 }
 
 // Accesors
+unsigned short MapManager::getMapWidth()
+{
+    return this->mapWidth;
+}
+
+unsigned short MapManager::getMapHeight()
+{
+    return this->mapHeight;
+}
+
+short MapManager::getCellId(std::string layer, sf::Vector2f pos)
+{
+    sf::Vector2i cellPos(static_cast<int>(pos.x / CELL_SIZE), static_cast<int>(pos.y / CELL_SIZE));
+
+    if (0 <= cellPos.x && this->mapWidth > cellPos.x && 0 <= cellPos.y && this->mapHeight > cellPos.y)
+    {
+        unsigned short id = this->map[layer][cellPos.y][cellPos.x];
+        return id;
+    }
+    
+    return -1;
+}
+
 bool MapManager::chekPointCollision(sf::Vector2f pos)
 /* Check is a point is in a non walkables cell */
 {
@@ -78,6 +101,7 @@ bool MapManager::chekPointCollision(sf::Vector2f pos)
     {
         // If cellPos is an non walkable cell
         if (this->map["walls"][cellPos.y][cellPos.x] != 0) return true;
+        // else pass
     }
 
     return false;

@@ -24,7 +24,10 @@ void Game::initWindow()
     videoMode.width = SCREEN_WIDTH;
     videoMode.height = SCREEN_HEIGHT;
     
+    sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
+    
     this->window = std::shared_ptr<sf::RenderWindow>(new sf::RenderWindow(videoMode, "Game", sf::Style::Titlebar | sf::Style::Close, settings));
+    this-> window->setPosition(sf::Vector2i(desktop.width / 2 - window->getSize().x / 2, desktop.height / 2 - window->getSize().y / 2));
 
     this->window->setVerticalSyncEnabled(false);
     this->window->setFramerateLimit(60);
@@ -32,13 +35,15 @@ void Game::initWindow()
 
 void Game::initVariables()
 {
-    // this->drawMap = true;
+    this->showMiniMap = true;
+    // this->showMiniMap = false;
     this->drawMap = false;
-    
+    // this->drawMap = true;
+
     this->player = std::shared_ptr<Player>(new Player());
     this->mapManager = std::shared_ptr<MapManager>(new MapManager());
 
-    this->rayCastingEngine = std::unique_ptr<RayCasting>(new RayCasting(drawMap=this->drawMap));
+    this->rayCastingEngine = std::unique_ptr<RayCasting>(new RayCasting(this->showMiniMap));
 
     this->mapManager->loadMap(this->player);
 }
@@ -68,15 +73,20 @@ void Game::moveCamera()
 
 void Game::drawMiniMap()
 {
-    // sf::View miniMap = this->window->getDefaultView();
-    // miniMap.setViewport(sf::FloatRect(0.f, 0.f, 0.2f, 0.2f));
-    // this->window->setView(miniMap);
-    
+    sf::View miniMap = this->window->getDefaultView();
+    miniMap.setViewport(sf::FloatRect(0.f, 0.f, 0.35f, 0.35f));
+    this->window->setView(miniMap);
+
+    sf::RectangleShape bg;
+    bg.setSize(sf::Vector2f(CELL_SIZE * this->mapManager->getMapWidth(), CELL_SIZE * this->mapManager->getMapHeight()));
+    bg.setFillColor(sf::Color(20, 20, 20));
+    this->window->draw(bg);
+
     this->rayCastingEngine->renderFovVisualisation(this->window);
     this->player->render(this->window);
     this->mapManager->render(this->window);
 
-    // this->window->setView(this->window->getDefaultView());
+    this->window->setView(this->window->getDefaultView());
 }
 
 // Accesors 
@@ -105,13 +115,19 @@ void Game::render()
         this->window->clear(sf::Color(20, 20, 20));
 
         if (this->drawMap)
-        {
-            // this->moveCamera();
-            this->drawMiniMap();
+        {   
+            std::cout << this->drawMap << '\n';
+            this->rayCastingEngine->renderFovVisualisation(this->window);
+            this->player->render(this->window);
+            this->mapManager->render(this->window);
+
+            if (this->showMiniMap) this->drawMiniMap();
         }
         else
         {
             this->rayCastingEngine->render(this->window);
+
+            if (this->showMiniMap) this->drawMiniMap();
         }
 
         this->window->display();

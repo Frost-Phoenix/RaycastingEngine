@@ -54,7 +54,26 @@ double RayCasting::RayDepthHorizontalCollison(std::shared_ptr<MapManager> mapMan
     while (rayLength < MAX_RAY_LEGHT)
     {
         // If the ray hit a wall we stop expending the ray
-        if (mapManager->chekPointCollision(rayEndPos)) break;
+        if (mapManager->chekPointCollision(rayEndPos))
+        {
+            short colideCellId = mapManager->getCellId("walls", rayEndPos);
+            
+            if (colideCellId == MAP_WALL_ID)
+            {
+                break;   
+            } 
+            else if (colideCellId == MAP_HORIZONTAL_DOOR_ID)
+            {
+                sf::Vector2f tmpRayEndPos(rayEndPos.x + step.x / 2, rayEndPos.y + step.y / 2);
+
+                if (mapManager->chekPointCollision(tmpRayEndPos) && mapManager->getCellId("walls", tmpRayEndPos) == MAP_HORIZONTAL_DOOR_ID)
+                {
+                    rayLength += deltaRayLenght / 2;
+                    break;
+                }
+            }
+        }
+        
         // Expending the ray one cell on the y axis
         rayEndPos.x += step.x;
         rayEndPos.y += step.y;
@@ -105,7 +124,25 @@ double RayCasting::RayDepthVerticalCollison(std::shared_ptr<MapManager> mapManag
     while (rayLength < MAX_RAY_LEGHT)
     {
         // If the ray hit a wall we stop expending the ray
-        if (mapManager->chekPointCollision(rayEndPos)) break;
+        if (mapManager->chekPointCollision(rayEndPos))
+        {
+            short colideCellId = mapManager->getCellId("walls", rayEndPos);
+            
+            if (colideCellId == MAP_WALL_ID)
+            {
+                break;   
+            } 
+            else if (colideCellId == MAP_VERTICAL_DOOR_ID)
+            {
+                sf::Vector2f tmpRayEndPos(rayEndPos.x + step.x / 2, rayEndPos.y + step.y / 2);
+
+                if (mapManager->chekPointCollision(tmpRayEndPos) && mapManager->getCellId("walls", tmpRayEndPos) == MAP_VERTICAL_DOOR_ID)
+                {
+                    rayLength += deltaRayLenght / 2;
+                    break;
+                }
+            }
+        }
         // Expending the ray one cell on the x axis
         rayEndPos.x += step.x;
         rayEndPos.y += step.y;
@@ -164,7 +201,7 @@ void RayCasting::update(std::shared_ptr<MapManager> mapManager, sf::Vector2f pos
 }
 
 void RayCasting::renderFovVisualisation(std::shared_ptr<sf::RenderTarget> renderTarget)
-{    
+{
     renderTarget->draw(this->fovVisualization);
 }
 
@@ -207,7 +244,7 @@ void RayCasting::render(std::shared_ptr<sf::RenderTarget> renderTarget)
         // Place the column at x=current_col_x and centered on the y axis
         col.setPosition(sf::Vector2f(current_col_x, (SCREEN_HEIGHT / 2.f) - (projectionHeight / 2.f)));
         // White to black depending of de distance 
-        short color = 255 / (1 + std::pow(rayLength / CELL_SIZE, 5) * 0.00002);
+        short color = 255 / (1 + std::pow(rayLength / CELL_SIZE, 4) * 0.0002);
         col.setFillColor(sf::Color(color, color, color));
 
         // Draw the projection column to the screen

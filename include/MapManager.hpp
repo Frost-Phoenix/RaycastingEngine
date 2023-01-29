@@ -4,13 +4,11 @@
 #include "Utils.hpp"
 #include "Player.hpp"
 
-// Ne peut pas metre #includde "Player.hpp" car sinon le compileur tourne en rond dans les include (donc erreur)
-// car MapManager inclue Player et Player inclue MapManager
-class Player;
 
 #define MAP_AS_JSON
 
-#define MAP_WALL_ID
+
+class Player;
 
 
 class MapManager
@@ -45,6 +43,9 @@ class MapManager
         ~MapManager();
 
         // Accesors
+        unsigned short getMapWidth();
+        unsigned short getMapHeight();
+        short getCellId(std::string layer, sf::Vector2f pos);
         bool chekPointCollision(sf::Vector2f pos);
         bool chekRectCollision(sf::Vector2f pos, sf::FloatRect rect);
         sf::Vector2f getNewPosition(sf::Vector2f pos, sf::Vector2f currentPos, sf::FloatRect rect);

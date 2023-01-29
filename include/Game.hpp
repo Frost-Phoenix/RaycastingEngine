@@ -24,6 +24,7 @@ class Game
         // Raycating engine
         std::unique_ptr<RayCasting> rayCastingEngine;
         bool drawMap;
+        bool showMiniMap;
 
         // Private functions
         void initWindow();

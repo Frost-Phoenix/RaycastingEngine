@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="20" height="15" tilewidth="32" tileheight="32" infinite="0" nextlayerid="5" nextobjectid="1">
+<map version="1.8" tiledversion="1.8.0" orientation="orthogonal" renderorder="right-down" width="20" height="15" tilewidth="32" tileheight="32" infinite="0" nextlayerid="5" nextobjectid="1">
+ <editorsettings>
+  <export target="../level_test.json" format="json"/>
+ </editorsettings>
  <tileset firstgid="1" source="tilemap/tileset.tsx"/>
  <layer id="3" name="floor" width="20" height="15">
   <data encoding="csv">
