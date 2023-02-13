@@ -5,9 +5,6 @@
 #include "Player.hpp"
 
 
-#define MAP_AS_JSON
-
-
 class Player;
 
 

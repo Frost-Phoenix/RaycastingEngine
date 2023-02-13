@@ -3,22 +3,33 @@
 #include "pch.hpp"
 #include "Utils.hpp"
 #include "MapManager.hpp"
+#include "TextureManager.hpp"
 
+
+struct RayHitInfo
+{
+    double length;
+    unsigned short textureId;
+    unsigned short textureCol;
+};
 
 class RayCasting
 {
     private:
         // Sprite
         sf::VertexArray fovVisualization;
-        
+
+        // Texure manager
+        std::unique_ptr<TextureManager> textureManager;
+
         // Variables
         bool drawMap;
-        std::array<double, NB_RAY> raysLength;
+        std::array<RayHitInfo, NB_RAY> raysHitInfos;
 
         // Private functions
-        double RayDepthHorizontalCollison(std::shared_ptr<MapManager> mapManager, sf::Vector2f pos, double angle);
-        double RayDepthVerticalCollison(std::shared_ptr<MapManager> mapManager, sf::Vector2f pos, double angle);
-        double castRay(std::shared_ptr<MapManager> mapManager, sf::Vector2f pos, double angle);
+        RayHitInfo castHorizontalRay(std::shared_ptr<MapManager> mapManager, sf::Vector2f pos, double angle);
+        RayHitInfo castVerticalRay(std::shared_ptr<MapManager> mapManager, sf::Vector2f pos, double angle);
+        RayHitInfo castRay(std::shared_ptr<MapManager> mapManager, sf::Vector2f pos, double angle);
 
     public:
         // Constructor

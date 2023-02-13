@@ -10,7 +10,7 @@ Game::Game()
 
 // Destructor
 Game::~Game()
-{    
+{
 
 }
 
@@ -35,8 +35,8 @@ void Game::initWindow()
 
 void Game::initVariables()
 {
-    this->showMiniMap = true;
-    // this->showMiniMap = false;
+    // this->showMiniMap = true;
+    this->showMiniMap = false;
     this->drawMap = false;
     // this->drawMap = true;
 

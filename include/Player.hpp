@@ -10,11 +10,9 @@ class Player
 {
     private:
         // Sprite
-        sf::Texture texture;
         sf::CircleShape sprite;
 
         // Variables
-        // float deltaTime;
         sf::Vector2f pos;
 
         short moveSpeed;

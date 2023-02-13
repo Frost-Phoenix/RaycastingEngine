@@ -1,12 +1,13 @@
 #include "RayCasting.hpp"
-#include <iomanip>
-#include <limits>
+
 
 // Constructor
 RayCasting::RayCasting(bool drawMap)
 {
     this->drawMap = drawMap;
     this->fovVisualization = sf::VertexArray(sf::TriangleFan, NB_RAY + 1);
+
+    this->textureManager = std::unique_ptr<TextureManager>(new TextureManager());
 }
 
 RayCasting::~RayCasting()
@@ -15,13 +16,14 @@ RayCasting::~RayCasting()
 }
 
 // Private functions
-double RayCasting::RayDepthHorizontalCollison(std::shared_ptr<MapManager> mapManager, sf::Vector2f pos, double angle)
+RayHitInfo RayCasting::castHorizontalRay(std::shared_ptr<MapManager> mapManager, sf::Vector2f pos, double angle)
 {
     double rayLength = 0.f;
     // Delta x and y to move one tile on the y axis
     sf::Vector2f step;
     // Ray end pos used for checking the colision with a wall
     sf::Vector2f rayEndPos(0, 0);
+    RayHitInfo rayHitInfo;
 
     double cos_a = std::cos(angle);
     double sin_a = std::sin(angle);
@@ -46,9 +48,9 @@ double RayCasting::RayDepthHorizontalCollison(std::shared_ptr<MapManager> mapMan
     rayLength = (rayEndPos.y - pos.y) / sin_a;
     rayEndPos.x = pos.x + rayLength * cos_a;
 
-    // Delta ray lenght to move one cell on the y axis
-    double deltaRayLenght = ((step.y / CELL_SIZE) / sin_a) * (double)CELL_SIZE;
-    step.x = deltaRayLenght * cos_a;
+    // Delta ray length to move one cell on the y axis
+    double deltaRayLength = ((step.y / CELL_SIZE) / sin_a) * (double)CELL_SIZE;
+    step.x = deltaRayLength * cos_a;
 
     // While the ray length is smaller then the max ray length, we extend the ray one cell on the y axis
     while (rayLength < MAX_RAY_LEGHT)
@@ -56,19 +58,21 @@ double RayCasting::RayDepthHorizontalCollison(std::shared_ptr<MapManager> mapMan
         // If the ray hit a wall we stop expending the ray
         if (mapManager->chekPointCollision(rayEndPos))
         {
-            short colideCellId = mapManager->getCellId("walls", rayEndPos);
+            short colideCellId = mapManager->getCellId("collision", rayEndPos);
             
             if (colideCellId == MAP_WALL_ID)
             {
+                rayHitInfo.textureCol = static_cast<short>(std::floor(std::fmod(rayEndPos.x, CELL_SIZE) * 2));
                 break;   
             } 
             else if (colideCellId == MAP_HORIZONTAL_DOOR_ID)
             {
                 sf::Vector2f tmpRayEndPos(rayEndPos.x + step.x / 2, rayEndPos.y + step.y / 2);
 
-                if (mapManager->chekPointCollision(tmpRayEndPos) && mapManager->getCellId("walls", tmpRayEndPos) == MAP_HORIZONTAL_DOOR_ID)
+                if (mapManager->chekPointCollision(tmpRayEndPos) && mapManager->getCellId("collision", tmpRayEndPos) == MAP_HORIZONTAL_DOOR_ID)
                 {
-                    rayLength += deltaRayLenght / 2;
+                    rayLength += deltaRayLength / 2;
+                    rayHitInfo.textureCol = static_cast<short>(std::floor(std::fmod(tmpRayEndPos.x, CELL_SIZE) * 2));
                     break;
                 }
             }
@@ -77,21 +81,28 @@ double RayCasting::RayDepthHorizontalCollison(std::shared_ptr<MapManager> mapMan
         // Expending the ray one cell on the y axis
         rayEndPos.x += step.x;
         rayEndPos.y += step.y;
-        rayLength += deltaRayLenght;
+        rayLength += deltaRayLength;
     }
 
     // We return the MAX_RAY_LEGHT if the ray length is biger, otherwise the ray length
-    if (rayLength > MAX_RAY_LEGHT) return MAX_RAY_LEGHT;
-    return rayLength;
+    if (rayLength > MAX_RAY_LEGHT) rayHitInfo.length = MAX_RAY_LEGHT;
+    else rayHitInfo.length = rayLength;
+
+    rayHitInfo.textureId = mapManager->getCellId("walls", rayEndPos);
+
+    if (sin_a > 0) rayHitInfo.textureCol = TEXTURE_SIZE - 1 - rayHitInfo.textureCol;
+    
+    return rayHitInfo;
 }
 
-double RayCasting::RayDepthVerticalCollison(std::shared_ptr<MapManager> mapManager, sf::Vector2f pos, double angle)
+RayHitInfo RayCasting::castVerticalRay(std::shared_ptr<MapManager> mapManager, sf::Vector2f pos, double angle)
 {
     double rayLength = 0.f;
     // Delta x and y to move one tile on the x axis
     sf::Vector2f step;
     // Ray end pos used for checking the colision with a wall
     sf::Vector2f rayEndPos(0, 0);
+    RayHitInfo rayHitInfo;
 
     double cos_a = std::cos(angle);
     double sin_a = std::sin(angle);
@@ -116,9 +127,9 @@ double RayCasting::RayDepthVerticalCollison(std::shared_ptr<MapManager> mapManag
     rayLength = (rayEndPos.x - pos.x) / cos_a;
     rayEndPos.y = pos.y + rayLength * sin_a;
 
-    // Delta ray lenght to move one cell on the x axis
-    double deltaRayLenght = ((step.x / CELL_SIZE) / cos_a) * (double)CELL_SIZE;
-    step.y = deltaRayLenght * sin_a;
+    // Delta ray length to move one cell on the x axis
+    double deltaRayLength = ((step.x / CELL_SIZE) / cos_a) * (double)CELL_SIZE;
+    step.y = deltaRayLength * sin_a;
 
     // While the ray length is smaller then the max ray length, we extend the ray one cell on the x axis
     while (rayLength < MAX_RAY_LEGHT)
@@ -126,19 +137,21 @@ double RayCasting::RayDepthVerticalCollison(std::shared_ptr<MapManager> mapManag
         // If the ray hit a wall we stop expending the ray
         if (mapManager->chekPointCollision(rayEndPos))
         {
-            short colideCellId = mapManager->getCellId("walls", rayEndPos);
+            short colideCellId = mapManager->getCellId("collision", rayEndPos);
             
             if (colideCellId == MAP_WALL_ID)
             {
+                rayHitInfo.textureCol = static_cast<short>(std::floor(std::fmod(rayEndPos.y, CELL_SIZE) * 2));
                 break;   
             } 
             else if (colideCellId == MAP_VERTICAL_DOOR_ID)
             {
                 sf::Vector2f tmpRayEndPos(rayEndPos.x + step.x / 2, rayEndPos.y + step.y / 2);
 
-                if (mapManager->chekPointCollision(tmpRayEndPos) && mapManager->getCellId("walls", tmpRayEndPos) == MAP_VERTICAL_DOOR_ID)
+                if (mapManager->chekPointCollision(tmpRayEndPos) && mapManager->getCellId("collision", tmpRayEndPos) == MAP_VERTICAL_DOOR_ID)
                 {
-                    rayLength += deltaRayLenght / 2;
+                    rayLength += deltaRayLength / 2;
+                    rayHitInfo.textureCol = static_cast<short>(std::floor(std::fmod(tmpRayEndPos.y, CELL_SIZE) * 2));
                     break;
                 }
             }
@@ -146,24 +159,34 @@ double RayCasting::RayDepthVerticalCollison(std::shared_ptr<MapManager> mapManag
         // Expending the ray one cell on the x axis
         rayEndPos.x += step.x;
         rayEndPos.y += step.y;
-        rayLength += deltaRayLenght;
+        rayLength += deltaRayLength;
     }
 
     // We return the MAX_RAY_LEGHT if the ray length is biger, otherwise the ray length
-    if (rayLength > MAX_RAY_LEGHT) return MAX_RAY_LEGHT;
-    return rayLength;
+    if (rayLength > MAX_RAY_LEGHT) rayHitInfo.length = MAX_RAY_LEGHT;
+    else rayHitInfo.length = rayLength;
+
+    rayHitInfo.textureId = mapManager->getCellId("walls", rayEndPos);
+
+    if (cos_a < 0) rayHitInfo.textureCol = TEXTURE_SIZE - 1 - rayHitInfo.textureCol;
+    
+    return rayHitInfo;
 }
 
-double RayCasting::castRay(std::shared_ptr<MapManager> mapManager, sf::Vector2f pos, double angle)
+RayHitInfo RayCasting::castRay(std::shared_ptr<MapManager> mapManager, sf::Vector2f pos, double angle)
 {
     // Distance between the player and the closest in the angle dirrection by checking colision on the x axis
-    double verticalRayLenght = this->RayDepthVerticalCollison(mapManager, pos, angle);
+    RayHitInfo verticalRay = this->castVerticalRay(mapManager, pos, angle);
     // Distance between the player and the closest in the angle dirrection by checking colision on the y axis
-    double horizontalRayLenght = this->RayDepthHorizontalCollison(mapManager, pos, angle);
+    RayHitInfo horizontalRay = this->castHorizontalRay(mapManager, pos, angle);
 
     // Take the smallest ray
-    if (verticalRayLenght < horizontalRayLenght) return verticalRayLenght;
-    else return horizontalRayLenght;
+    RayHitInfo rayHitInfo;
+    
+    if (verticalRay.length < horizontalRay.length) rayHitInfo = verticalRay;
+    else rayHitInfo = horizontalRay;
+
+    return rayHitInfo;
 }
 
 // Accesors
@@ -185,16 +208,18 @@ void RayCasting::update(std::shared_ptr<MapManager> mapManager, sf::Vector2f pos
     for (unsigned short i = 0; i < NB_RAY; i++)
     {
         //Distance between the player and the closest wall in the angle dirrection
-        double rayLength = this->castRay(mapManager, pos, decToRad(angle));
+        RayHitInfo rayHitInfo = this->castRay(mapManager, pos, decToRad(angle));
 
         if (this->drawMap)
         {
-            sf::Vector2f hitPos = sf::Vector2f(pos.x + rayLength * std::cos(decToRad(angle)), pos.y + rayLength * std::sin(decToRad(angle)));
+            sf::Vector2f hitPos = sf::Vector2f(pos.x + rayHitInfo.length * std::cos(decToRad(angle)), pos.y + rayHitInfo.length * std::sin(decToRad(angle)));
             this->fovVisualization[i + 1].position = hitPos;
         }
         
         // Remove fisheye effect
-        this->raysLength[i] = rayLength * std::cos(decToRad(baseAngle - angle));
+        rayHitInfo.length *= std::cos(decToRad(baseAngle - angle));
+        
+        this->raysHitInfos[i] = rayHitInfo;
 
         angle = get_degrees(angle + DELTA_ANGLE);
     }
@@ -214,10 +239,10 @@ void RayCasting::render(std::shared_ptr<sf::RenderTarget> renderTarget)
     // For all rays draw the projection column
     for (unsigned short i = 0; i < NB_RAY; i++)
     {
-        double rayLength = this->raysLength[i];
+        RayHitInfo rayHitInfo = this->raysHitInfos[i];
 
         // Height of the projection column
-        double projectionHeight = screeDist / (rayLength / CELL_SIZE);
+        double projectionHeight = screeDist / (rayHitInfo.length / CELL_SIZE);
 
         // To avoid distortion at the borders of the screen
         double ray_direction = FOV * (std::floor(0.5f * SCREEN_WIDTH) - i) / (SCREEN_WIDTH - 1);
@@ -237,17 +262,9 @@ void RayCasting::render(std::shared_ptr<sf::RenderTarget> renderTarget)
             
         last_col_x = current_col_x;
 
-        // Column projection rectangle shape (line)
-        sf::RectangleShape col;
-        // Size of the column : width 1 or more to avoid gaps ; height = projection_height
-        col.setSize(sf::Vector2f(next_col_x - current_col_x, projectionHeight));
-        // Place the column at x=current_col_x and centered on the y axis
-        col.setPosition(sf::Vector2f(current_col_x, (SCREEN_HEIGHT / 2.f) - (projectionHeight / 2.f)));
-        // White to black depending of de distance 
-        short color = 255 / (1 + std::pow(rayLength / CELL_SIZE, 4) * 0.0002);
-        col.setFillColor(sf::Color(color, color, color));
-
-        // Draw the projection column to the screen
-        renderTarget->draw(col);
+        short colWidth = next_col_x - current_col_x;
+        sf::Vector2f colPos(current_col_x, (SCREEN_HEIGHT / 2.f) - (projectionHeight / 2.f));
+        
+        this->textureManager->renderTextureLine(renderTarget, rayHitInfo.textureId, colPos, rayHitInfo.textureCol, colWidth, projectionHeight);
     }
 }

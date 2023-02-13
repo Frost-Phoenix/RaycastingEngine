@@ -57,7 +57,7 @@ void MapManager::loadMapFromJson(std::shared_ptr<Player> player)
                 }
                 else
                 {
-                    if (layer["data"][row * this->mapWidth + col].asInt() == 7)
+                    if (layer["data"][row * this->mapWidth + col].asInt() == MAP_PLAYER_ID)
                     {
                         player->setCenterPos(sf::Vector2f(col * CELL_SIZE + CELL_SIZE / 2, row * CELL_SIZE + CELL_SIZE / 2));
                     }
@@ -100,7 +100,7 @@ bool MapManager::chekPointCollision(sf::Vector2f pos)
     if (0 <= cellPos.x && this->mapWidth > cellPos.x && 0 <= cellPos.y && this->mapHeight > cellPos.y)
     {
         // If cellPos is an non walkable cell
-        if (this->map["walls"][cellPos.y][cellPos.x] != 0) return true;
+        if (this->map["collision"][cellPos.y][cellPos.x] != 0) return true;
         // else pass
     }
 
@@ -188,19 +188,19 @@ void MapManager::renderMap(std::shared_ptr<sf::RenderTarget> renderTarget)
     {
         for (unsigned char col = 0; col < this->mapWidth; col++)
         {
-            switch (this->map["walls"][row][col])
+            switch (this->map["collision"][row][col])
             {
-                case 1:
+                case MAP_WALL_ID:
                     this->wallCellSprite.setPosition(sf::Vector2f(col * CELL_SIZE, row * CELL_SIZE));
                     renderTarget->draw(this->wallCellSprite);
                     break;
 
-                case 2:
+                case MAP_HORIZONTAL_DOOR_ID:
                     this->horizontalDoorCellSprite.setPosition(sf::Vector2f(col * CELL_SIZE, row * CELL_SIZE));
                     renderTarget->draw(this->horizontalDoorCellSprite);
                     break;
 
-                case 3:
+                case MAP_VERTICAL_DOOR_ID:
                     this->verticalDoorCellSprite.setPosition(sf::Vector2f(col * CELL_SIZE, row * CELL_SIZE));
                     renderTarget->draw(this->verticalDoorCellSprite);
                     break;

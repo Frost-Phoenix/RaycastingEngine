@@ -2,6 +2,9 @@
 hpp_file = """#pragma once
 
 
+#include "Utils.hpp"
+
+
 class CLASS_NAME
 {
     private:
@@ -21,11 +24,10 @@ class CLASS_NAME
 
         // Public functions
         void update();
-        void render(sf::RenderTarget* renderTarget);
+        void render(std::shared_ptr<sf::RenderTarget> renderTarget);
 };"""
 
-cpp_file = """#include "Utils.hpp"
-#include "CLASS_NAME.hpp"
+cpp_file = """#include "CLASS_NAME.hpp"
 
 
 // Constructor
@@ -49,7 +51,7 @@ void CLASS_NAME::update()
     
 }
 
-void CLASS_NAME::render(sf::RenderTarget* renderTarget)
+void CLASS_NAME::render(std::shared_ptr<sf::RenderTarget> renderTarget)
 {
     renderTarget->draw(this->sprite);
 }

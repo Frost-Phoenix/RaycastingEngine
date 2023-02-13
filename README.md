@@ -11,7 +11,7 @@ A simple raycasting engine for an entextured 3d projection
 #### Raycasting 
 - ~~Add thin walls~~
 - Add doors
-- Add textured wall 
+- ~~Add textured wall~~
 - Add sprites  
 - Add enimies 
 

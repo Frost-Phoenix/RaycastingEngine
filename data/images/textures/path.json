@@ -1,0 +1,16 @@
+{
+    "paths" : [
+        {
+            "index" : 5,
+            "path" : "data/images/textures/wall/CONCRETE_3A.png"
+        },
+        {
+            "index" : 6,
+            "path" : "data/images/textures/wall/CONCRETE_3B.png"
+        },
+        {
+            "index" : 7,
+            "path" : "data/images/textures/door/DOOR_2A.png"
+        }
+    ]   
+}

@@ -1,6 +1,7 @@
 .vscode
 bin
 data/images/tmp
+tmp.cpp
 
 # Prerequisites
 *.d
