@@ -64,8 +64,8 @@ void MapManager::loadMapFromJson(std::shared_ptr<Player> player)
                         doorInfo.isClose = true;
                         doorInfo.isClosing = false;
                         doorInfo.isOpen = 0;
-                        doorInfo.maxOpenTime = 123;
-                        doorInfo.movingSpeed = 0.53;
+                        doorInfo.maxOpenTime = 100;
+                        doorInfo.movingSpeed = 0.85;
                         doorInfo.openingState = 0;
                         
                         this->doors[{row, col}] = doorInfo;
@@ -216,6 +216,11 @@ sf::Vector2f MapManager::getNewPosition(sf::Vector2f nextPos, sf::Vector2f curre
 void MapManager::loadMap(std::shared_ptr<Player> player)
 {
     this->loadMapFromJson(player);
+}
+
+float MapManager::getDoorOpeningState(sf::Vector2i cellPos)
+{
+    return this->doors[{cellPos.y, cellPos.x}].openingState;
 }
 
 void MapManager::openDoor(sf::Vector2i doorCellPos)

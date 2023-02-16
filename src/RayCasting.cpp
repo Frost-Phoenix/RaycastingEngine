@@ -24,6 +24,7 @@ RayHitInfo RayCasting::castHorizontalRay(std::shared_ptr<MapManager> mapManager,
     // Ray end pos used for checking the colision with a wall
     sf::Vector2f rayEndPos(0, 0);
     RayHitInfo rayHitInfo;
+    bool hitDoor = false;
 
     double cos_a = std::cos(angle);
     double sin_a = std::sin(angle);
@@ -58,22 +59,28 @@ RayHitInfo RayCasting::castHorizontalRay(std::shared_ptr<MapManager> mapManager,
         // If the ray hit a wall we stop expending the ray
         if (mapManager->chekPointCollision(rayEndPos))
         {
-            short colideCellId = mapManager->getCellId("collision", rayEndPos);
+            short collideCellId = mapManager->getCellId("collision", rayEndPos);
             
-            if (colideCellId == MAP_WALL_ID)
+            if (collideCellId == MAP_WALL_ID)
             {
                 rayHitInfo.textureCol = static_cast<short>(std::floor(std::fmod(rayEndPos.x, CELL_SIZE) * 2));
                 break;   
             } 
-            else if (colideCellId == MAP_HORIZONTAL_DOOR_ID)
+            else if (collideCellId == MAP_HORIZONTAL_DOOR_ID)
             {
                 sf::Vector2f tmpRayEndPos(rayEndPos.x + step.x / 2, rayEndPos.y + step.y / 2);
 
                 if (mapManager->chekPointCollision(tmpRayEndPos) && mapManager->getCellId("collision", tmpRayEndPos) == MAP_HORIZONTAL_DOOR_ID)
                 {
-                    rayLength += deltaRayLength / 2;
-                    rayHitInfo.textureCol = static_cast<short>(std::floor(std::fmod(tmpRayEndPos.x, CELL_SIZE) * 2));
-                    break;
+                    float doorOpeningState = mapManager->getDoorOpeningState(mapManager->getCellPos(tmpRayEndPos));
+                    
+                    if (std::fmod(tmpRayEndPos.x, CELL_SIZE) > doorOpeningState)
+                    {
+                        hitDoor = true;
+                        rayLength += deltaRayLength / 2;
+                        rayHitInfo.textureCol = static_cast<short>(std::floor(std::fmod(tmpRayEndPos.x, CELL_SIZE) * 2 - doorOpeningState * 2));
+                        break;
+                    }
                 }
             }
         }
@@ -90,7 +97,7 @@ RayHitInfo RayCasting::castHorizontalRay(std::shared_ptr<MapManager> mapManager,
 
     rayHitInfo.textureId = mapManager->getCellId("walls", rayEndPos);
 
-    if (sin_a > 0) rayHitInfo.textureCol = TEXTURE_SIZE - 1 - rayHitInfo.textureCol;
+    if (sin_a > 0 && !hitDoor) rayHitInfo.textureCol = TEXTURE_SIZE - 1 - rayHitInfo.textureCol;
     
     return rayHitInfo;
 }
@@ -103,6 +110,7 @@ RayHitInfo RayCasting::castVerticalRay(std::shared_ptr<MapManager> mapManager, s
     // Ray end pos used for checking the colision with a wall
     sf::Vector2f rayEndPos(0, 0);
     RayHitInfo rayHitInfo;
+    bool hitDoor = false;
 
     double cos_a = std::cos(angle);
     double sin_a = std::sin(angle);
@@ -137,22 +145,28 @@ RayHitInfo RayCasting::castVerticalRay(std::shared_ptr<MapManager> mapManager, s
         // If the ray hit a wall we stop expending the ray
         if (mapManager->chekPointCollision(rayEndPos))
         {
-            short colideCellId = mapManager->getCellId("collision", rayEndPos);
+            short collideCellId = mapManager->getCellId("collision", rayEndPos);
             
-            if (colideCellId == MAP_WALL_ID)
+            if (collideCellId == MAP_WALL_ID)
             {
                 rayHitInfo.textureCol = static_cast<short>(std::floor(std::fmod(rayEndPos.y, CELL_SIZE) * 2));
                 break;   
             } 
-            else if (colideCellId == MAP_VERTICAL_DOOR_ID)
+            else if (collideCellId == MAP_VERTICAL_DOOR_ID)
             {
                 sf::Vector2f tmpRayEndPos(rayEndPos.x + step.x / 2, rayEndPos.y + step.y / 2);
 
                 if (mapManager->chekPointCollision(tmpRayEndPos) && mapManager->getCellId("collision", tmpRayEndPos) == MAP_VERTICAL_DOOR_ID)
                 {
-                    rayLength += deltaRayLength / 2;
-                    rayHitInfo.textureCol = static_cast<short>(std::floor(std::fmod(tmpRayEndPos.y, CELL_SIZE) * 2));
-                    break;
+                    float doorOpeningState = mapManager->getDoorOpeningState(mapManager->getCellPos(tmpRayEndPos));
+                    
+                    if (std::fmod(tmpRayEndPos.y, CELL_SIZE) > doorOpeningState)
+                    {
+                        hitDoor = true;
+                        rayLength += deltaRayLength / 2;
+                        rayHitInfo.textureCol = static_cast<short>(std::floor(std::fmod(tmpRayEndPos.y, CELL_SIZE) * 2 - doorOpeningState * 2));
+                        break;
+                    }
                 }
             }
         }
@@ -168,7 +182,7 @@ RayHitInfo RayCasting::castVerticalRay(std::shared_ptr<MapManager> mapManager, s
 
     rayHitInfo.textureId = mapManager->getCellId("walls", rayEndPos);
 
-    if (cos_a < 0) rayHitInfo.textureCol = TEXTURE_SIZE - 1 - rayHitInfo.textureCol;
+    if (cos_a < 0 && !hitDoor) rayHitInfo.textureCol = TEXTURE_SIZE - 1 - rayHitInfo.textureCol;
     
     return rayHitInfo;
 }

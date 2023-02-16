@@ -60,6 +60,7 @@ class MapManager
         unsigned short getMapHeight();
         sf::Vector2i getCellPos(sf::Vector2f pos);
         short getCellId(std::string layer, sf::Vector2f pos);
+        float getDoorOpeningState(sf::Vector2i cellPos);
 
         // Public functions
         void loadMap(std::shared_ptr<Player> player);
