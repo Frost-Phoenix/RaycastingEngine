@@ -22,6 +22,7 @@ void Player::initSprite()
 void Player::initVariables()
 {
     this->rotation = 270;
+    this->actionRange = 25;
 
     this->moveSpeed = 2;
     this->rotationSpeed = 2;
@@ -106,6 +107,20 @@ void Player::move(std::shared_ptr<MapManager> mapManager)
     }
 }
 
+void Player::checkActions(std::shared_ptr<MapManager> mapManager)
+{
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+    {
+        sf::Vector2f doorPos((this->sprite.getPosition().x + this->sprite.getLocalBounds().width / 2) + this->actionRange * std::cos(decToRad(this->rotation)), (this->sprite.getPosition().y + this->sprite.getLocalBounds().width / 2) + this->actionRange * std::sin(decToRad(this->rotation)));
+        
+        if (MAP_VERTICAL_DOOR_ID == mapManager->getCellId("collision", doorPos) || MAP_HORIZONTAL_DOOR_ID == mapManager->getCellId("collision", doorPos))
+        {
+            sf::Vector2i doorCellPos = mapManager->getCellPos(doorPos);
+            mapManager->openDoor(doorCellPos);
+        }    
+    }
+}
+
 // Accesors
 const sf::Vector2f Player::getPos() const
 {
@@ -122,6 +137,11 @@ const short Player::getAngle() const
     return this->rotation;
 }
 
+const sf::FloatRect Player::getHitbox() const
+{
+    return this->sprite.getGlobalBounds();
+}
+
 // Public functions
 void Player::setCenterPos(sf::Vector2f pos)
 {
@@ -133,14 +153,15 @@ void Player::update(std::shared_ptr<MapManager> mapManager)
 {
     this->checkInputs();
     this->move(mapManager);
+    this->checkActions(mapManager);
 }
 
 void Player::renderPlayerDirection(std::shared_ptr<sf::RenderTarget> renderTarget)
 {
     sf::VertexArray line(sf::LinesStrip, 2);
     line[0].position = sf::Vector2f(this->sprite.getPosition().x + this->sprite.getLocalBounds().width / 2, this->sprite.getPosition().y + this->sprite.getLocalBounds().height / 2);
-    line[0].color  = sf::Color::Red;
-    line[1].position = sf::Vector2f((this->sprite.getPosition().x + this->sprite.getLocalBounds().width / 2 ) + 100 * std::cos(decToRad(this->rotation)), (this->sprite.getPosition().y + this->sprite.getLocalBounds().width / 2 ) + 100  * std::sin(decToRad(this->rotation)));
+    line[0].color = sf::Color::Red;
+    line[1].position = sf::Vector2f((this->sprite.getPosition().x + this->sprite.getLocalBounds().width / 2) + this->actionRange * std::cos(decToRad(this->rotation)), (this->sprite.getPosition().y + this->sprite.getLocalBounds().width / 2) + this->actionRange * std::sin(decToRad(this->rotation)));
     line[1].color = sf::Color::Red;
     renderTarget->draw(line);
 }

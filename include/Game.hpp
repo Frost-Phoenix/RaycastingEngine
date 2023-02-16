@@ -13,7 +13,8 @@ class Game
         // Window 
         std::shared_ptr<sf::RenderWindow> window;
         sf::Event events;
-        
+        bool isFocus;
+
         // Frame rate independency
         sf::Clock clock;
 

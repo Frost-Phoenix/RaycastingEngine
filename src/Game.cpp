@@ -35,8 +35,10 @@ void Game::initWindow()
 
 void Game::initVariables()
 {
-    // this->showMiniMap = true;
-    this->showMiniMap = false;
+    this->isFocus = false;
+    
+    this->showMiniMap = true;
+    // this->showMiniMap = false;
     this->drawMap = false;
     // this->drawMap = true;
 
@@ -56,6 +58,8 @@ void Game::pollEvents()
         {
             this->window->close();
         }
+        else if (this->events.type == sf::Event::GainedFocus) this->isFocus = true;
+        else if(this->events.type == sf::Event::LostFocus) this->isFocus = false;
     }
 }
 
@@ -98,11 +102,12 @@ const bool Game::isRunning() const
 // Public functions
 void Game::update()
 {
-    this->updateDeltaTime();
     this->pollEvents();
 
-    if (this->isRunning())
+    if (this->isRunning() && this->isFocus)
     {
+        this->updateDeltaTime();
+        this->mapManager->update(this->player);
         this->player->update(this->mapManager);
         this->rayCastingEngine->update(this->mapManager, this->player->getCenterPos(), this->player->getAngle());
     }
@@ -110,7 +115,7 @@ void Game::update()
 
 void Game::render()
 {
-    if (this->isRunning())
+    if (this->isRunning() && this->isFocus)
     {
         this->window->clear(sf::Color(20, 20, 20));
 

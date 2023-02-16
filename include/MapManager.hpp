@@ -8,6 +8,19 @@
 class Player;
 
 
+struct DoorInfo
+{
+    bool isOpen;
+    bool isOpening;
+    bool isClose;
+    bool isClosing;
+    short openTime;
+    float maxOpenTime;
+    float movingSpeed;
+    float openingState;
+};
+
+
 class MapManager
 {
     private:
@@ -23,6 +36,7 @@ class MapManager
 
         // Variables
         std::map<std::string, std::vector<std::vector<unsigned short>>> map;
+        std::map<std::tuple<unsigned short, unsigned short>, DoorInfo> doors;
         unsigned short mapHeight;
         unsigned short mapWidth;
 
@@ -31,6 +45,8 @@ class MapManager
         void initVariables();
 
         void loadMapFromJson(std::shared_ptr<Player> player);
+
+        void updateDoors(std::shared_ptr<Player> player);
 
         void renderMap(std::shared_ptr<sf::RenderTarget> renderTarget);
 
@@ -42,12 +58,18 @@ class MapManager
         // Accesors
         unsigned short getMapWidth();
         unsigned short getMapHeight();
+        sf::Vector2i getCellPos(sf::Vector2f pos);
         short getCellId(std::string layer, sf::Vector2f pos);
-        bool chekPointCollision(sf::Vector2f pos);
-        bool chekRectCollision(sf::Vector2f pos, sf::FloatRect rect);
-        sf::Vector2f getNewPosition(sf::Vector2f pos, sf::Vector2f currentPos, sf::FloatRect rect);
 
         // Public functions
         void loadMap(std::shared_ptr<Player> player);
+        
+        bool chekPointCollision(sf::Vector2f pos, bool checkDoorCollision = false);
+        bool chekRectCollision(sf::Vector2f pos, sf::FloatRect rect, bool checkDoorCollision = false);
+        sf::Vector2f getNewPosition(sf::Vector2f pos, sf::Vector2f currentPos, sf::FloatRect rect);
+
+        void openDoor(sf::Vector2i doorCellPos);
+        
+        void update(std::shared_ptr<Player> player);
         void render(std::shared_ptr<sf::RenderTarget> renderTarget);
 };
