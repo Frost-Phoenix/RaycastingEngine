@@ -211,7 +211,7 @@ void RayCasting::toogleFovDrawing(bool state)
     this->drawMap = state;
 }
 
-void RayCasting::update(std::shared_ptr<MapManager> mapManager, sf::Vector2f pos, short baseAngle)
+void RayCasting::update(std::shared_ptr<MapManager> mapManager, sf::Vector2f pos, double baseAngle)
 {
     if (this->drawMap) this->fovVisualization[0].position = sf::Vector2f(pos.x, pos.y);
 

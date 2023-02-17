@@ -34,7 +34,7 @@ class Game
         void pollEvents();
         void updateDeltaTime();
 
-        void moveCamera();
+        void updateMouse();
         void drawMiniMap();
 
     public:
@@ -44,7 +44,7 @@ class Game
 
         // Accesors
         const bool isRunning() const;
-        
+
         // Public functions
         void update();
         void render();

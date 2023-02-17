@@ -3,7 +3,7 @@
 
 float get_degrees(float degrees)
 {
-    return static_cast<float>(fmod(360 + fmod(degrees, 360), 360));
+    return static_cast<float>(std::fmod(360 + std::fmod(degrees, 360), 360));
 }
 
 double decToRad(double degrees)

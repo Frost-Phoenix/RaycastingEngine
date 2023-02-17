@@ -21,18 +21,20 @@ void Player::initSprite()
 
 void Player::initVariables()
 {
-    this->rotation = 270;
+	this->rotation = 270;
     this->actionRange = 25;
 
     this->moveSpeed = 2;
     this->rotationSpeed = 2;
 }
 
-void Player::checkInputs()
+void Player::checkInputs(sf::Vector2i mousePos)
 {
     // Player rotaion / view 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))  this->rotation = get_degrees(this->rotation - this->rotationSpeed);
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) this->rotation = get_degrees(this->rotation + this->rotationSpeed);
+
+    this->rotation += (mousePos.x - SCREEN_WIDTH / 2.f) / 5.f;
 }
 
 void Player::move(std::shared_ptr<MapManager> mapManager)
@@ -132,7 +134,7 @@ const sf::Vector2f Player::getCenterPos() const
     return sf::Vector2f(this->sprite.getPosition().x + this->sprite.getLocalBounds().width / 2, this->sprite.getPosition().y + this->sprite.getLocalBounds().height / 2);
 }
 
-const short Player::getAngle() const
+const double Player::getAngle() const
 {
     return this->rotation;
 }
@@ -149,9 +151,9 @@ void Player::setCenterPos(sf::Vector2f pos)
     this->sprite.setPosition(pos.x - (playerHitbox.width / 2), pos.y - (playerHitbox.height / 2));
 }
 
-void Player::update(std::shared_ptr<MapManager> mapManager)
+void Player::update(std::shared_ptr<MapManager> mapManager, sf::Vector2i mousePos)
 {
-    this->checkInputs();
+    this->checkInputs(mousePos);
     this->move(mapManager);
     this->checkActions(mapManager);
 }

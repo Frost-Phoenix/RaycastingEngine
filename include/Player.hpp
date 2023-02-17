@@ -18,14 +18,14 @@ class Player
         short moveSpeed;
         short rotationSpeed;
         
-        short rotation;
+        double rotation;
         short actionRange;
 
         // Private functions
         void initSprite();
         void initVariables();
 
-        void checkInputs();
+        void checkInputs(sf::Vector2i mousePos);
         void move(std::shared_ptr<MapManager> mapManager);
         void checkActions(std::shared_ptr<MapManager> mapManager);
 
@@ -39,12 +39,12 @@ class Player
         // Accesors
         const sf::Vector2f getPos() const;
         const sf::Vector2f getCenterPos() const;
-        const short getAngle() const;
+        const double getAngle() const;
         const sf::FloatRect getHitbox() const;
 
         // Public functions
         void setCenterPos(sf::Vector2f pos);
         
-        void update(std::shared_ptr<MapManager> mapManager);
+        void update(std::shared_ptr<MapManager> mapManager, sf::Vector2i mousePos);
         void render(std::shared_ptr<sf::RenderTarget> renderTarget);
 };

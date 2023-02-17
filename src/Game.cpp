@@ -29,6 +29,9 @@ void Game::initWindow()
     this->window = std::shared_ptr<sf::RenderWindow>(new sf::RenderWindow(videoMode, "Game", sf::Style::Titlebar | sf::Style::Close, settings));
     this-> window->setPosition(sf::Vector2i(desktop.width / 2 - window->getSize().x / 2, desktop.height / 2 - window->getSize().y / 2));
 
+    this->window->setMouseCursorVisible(false);
+    sf::Mouse::setPosition(sf::Vector2i(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), *this->window.get());
+
     this->window->setVerticalSyncEnabled(false);
     this->window->setFramerateLimit(60);
 }
@@ -68,11 +71,9 @@ void Game::updateDeltaTime()
     this->window->setTitle("Game - " + std::to_string(static_cast<int>(1000000 / this->clock.restart().asMicroseconds())) + " fps");
 }
 
-void Game::moveCamera()
+void Game::updateMouse()
 {
-    sf::View view = this->window->getView();
-    view.setCenter(this->player->getCenterPos());
-    this->window->setView(view);
+    short mousePosX = sf::Mouse::getPosition(*this->window.get()).x;
 }
 
 void Game::drawMiniMap()
@@ -108,8 +109,10 @@ void Game::update()
     {
         this->updateDeltaTime();
         this->mapManager->update(this->player);
-        this->player->update(this->mapManager);
+        this->player->update(this->mapManager, sf::Mouse::getPosition(*this->window.get()));
         this->rayCastingEngine->update(this->mapManager, this->player->getCenterPos(), this->player->getAngle());
+    
+        sf::Mouse::setPosition(sf::Vector2i(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), *this->window.get());
     }
 }
 

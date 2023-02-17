@@ -42,6 +42,6 @@ class RayCasting
         void toogleFovDrawing(bool state);
         
         void renderFovVisualisation(std::shared_ptr<sf::RenderTarget> renderTarget);
-        void update(std::shared_ptr<MapManager> mapManager, sf::Vector2f pos, short baseAngle);
+        void update(std::shared_ptr<MapManager> mapManager, sf::Vector2f pos, double baseAngle);
         void render(std::shared_ptr<sf::RenderTarget> renderTarget);
 };

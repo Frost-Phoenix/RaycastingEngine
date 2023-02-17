@@ -22,4 +22,4 @@ A simple raycasting engine for an entextured 3d projection
 
 #### Other
 - Improve movement feels
-- Add mouse controlle
+- ~~Add mouse control~~
