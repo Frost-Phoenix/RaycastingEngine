@@ -94,6 +94,16 @@ void Game::drawMiniMap()
     this->window->setView(this->window->getDefaultView());
 }
 
+void Game::drawFloor()
+{
+    sf::RectangleShape floor;
+    floor.setFillColor(sf::Color(30, 30, 30));
+    floor.setPosition(sf::Vector2f(0, SCREEN_HEIGHT / 2));
+    floor.setSize(sf::Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT / 2));
+
+    this->window->draw(floor);
+}
+
 // Accesors 
 const bool Game::isRunning() const
 {
@@ -120,8 +130,9 @@ void Game::render()
 {
     if (this->isRunning() && this->isFocus)
     {
-        this->window->clear(sf::Color(20, 20, 20));
-
+        this->window->clear(sf::Color(10, 125, 180));
+        this->drawFloor();
+        
         if (this->drawMap)
         {   
             std::cout << this->drawMap << '\n';

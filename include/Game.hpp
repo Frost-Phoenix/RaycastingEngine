@@ -36,6 +36,7 @@ class Game
 
         void updateMouse();
         void drawMiniMap();
+        void drawFloor();
 
     public:
         // Constructor 
