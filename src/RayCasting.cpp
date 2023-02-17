@@ -63,7 +63,7 @@ RayHitInfo RayCasting::castHorizontalRay(std::shared_ptr<MapManager> mapManager,
             
             if (collideCellId == MAP_WALL_ID)
             {
-                rayHitInfo.textureCol = static_cast<short>(std::floor(std::fmod(rayEndPos.x, CELL_SIZE) * 2));
+                rayHitInfo.textureCol = static_cast<short>(std::floor(std::fmod(rayEndPos.x, CELL_SIZE) * (TEXTURE_SIZE / CELL_SIZE)));
                 break;   
             } 
             else if (collideCellId == MAP_HORIZONTAL_DOOR_ID)
@@ -78,7 +78,7 @@ RayHitInfo RayCasting::castHorizontalRay(std::shared_ptr<MapManager> mapManager,
                     {
                         hitDoor = true;
                         rayLength += deltaRayLength / 2;
-                        rayHitInfo.textureCol = static_cast<short>(std::floor(std::fmod(tmpRayEndPos.x, CELL_SIZE) * 2 - doorOpeningState * 2));
+                        rayHitInfo.textureCol = static_cast<short>(std::floor(std::fmod(tmpRayEndPos.x, CELL_SIZE) * 2 - doorOpeningState * (TEXTURE_SIZE / CELL_SIZE)));
                         break;
                     }
                 }
@@ -149,7 +149,7 @@ RayHitInfo RayCasting::castVerticalRay(std::shared_ptr<MapManager> mapManager, s
             
             if (collideCellId == MAP_WALL_ID)
             {
-                rayHitInfo.textureCol = static_cast<short>(std::floor(std::fmod(rayEndPos.y, CELL_SIZE) * 2));
+                rayHitInfo.textureCol = static_cast<short>(std::floor(std::fmod(rayEndPos.y, CELL_SIZE) * (TEXTURE_SIZE / CELL_SIZE)));
                 break;   
             } 
             else if (collideCellId == MAP_VERTICAL_DOOR_ID)
@@ -164,7 +164,7 @@ RayHitInfo RayCasting::castVerticalRay(std::shared_ptr<MapManager> mapManager, s
                     {
                         hitDoor = true;
                         rayLength += deltaRayLength / 2;
-                        rayHitInfo.textureCol = static_cast<short>(std::floor(std::fmod(tmpRayEndPos.y, CELL_SIZE) * 2 - doorOpeningState * 2));
+                        rayHitInfo.textureCol = static_cast<short>(std::floor(std::fmod(tmpRayEndPos.y, CELL_SIZE) * 2 - doorOpeningState * (TEXTURE_SIZE / CELL_SIZE)));
                         break;
                     }
                 }
@@ -262,7 +262,7 @@ void RayCasting::render(std::shared_ptr<sf::RenderTarget> renderTarget)
         double ray_direction = FOV * (std::floor(0.5f * SCREEN_WIDTH) - i) / (SCREEN_WIDTH - 1);
         double ray_position = 0.5f * std::tan(decToRad(ray_direction)) / std::tan(decToRad(0.5f * FOV));
 
-        short current_col_x = (short)std::round(SCREEN_WIDTH * (0.5f - ray_position));
+        short current_col_x = (short)std::round(SCREEN_WIDTH * (0.5f - ray_position)) - 1;
         short next_col_x = current_col_x + 1;
 
         // Filling missing column

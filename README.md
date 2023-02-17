@@ -2,6 +2,8 @@
 
 A c++ raycasting engine made with SFML
 
+![Alt text](data/images/screenshot/1.png?raw=true "Title")
+
 ## Current State 
  
 A simple raycasting engine including :
@@ -24,6 +26,7 @@ A simple raycasting engine including :
 - Add basic shadows on walls
 - Add transparent textures suport 
 - Add more type of thin walls suprot (not just in the midle of a tile)
+- Add shy texture (for bg illusion)
 - Add sprites  
 - Add enimies 
 

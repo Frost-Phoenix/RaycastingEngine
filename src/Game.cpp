@@ -97,7 +97,7 @@ void Game::drawMiniMap()
 void Game::drawFloor()
 {
     sf::RectangleShape floor;
-    floor.setFillColor(sf::Color(30, 30, 30));
+    floor.setFillColor(sf::Color(10, 2, 0));
     floor.setPosition(sf::Vector2f(0, SCREEN_HEIGHT / 2));
     floor.setSize(sf::Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT / 2));
 
