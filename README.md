@@ -17,16 +17,16 @@ A simple raycasting engine including :
 ## To-do
 
 #### Raycasting 
+- ~~Add textured wall~~
 - ~~Add thin walls~~
 - ~~Add doors~~
 - ~~Add doors animations~~
-- ~~Add textured wall~~
+- ~~Add basic shadows on walls~~
 - Add floor casting (with textures)
 - Add ceiling casting (with textures)
-- Add basic shadows on walls
 - Add transparent textures suport 
 - Add more type of thin walls suprot (not just in the midle of a tile)
-- Add shy texture (for bg illusion)
+- Add sky texture (for bg illusion)
 - Add sprites  
 - Add enimies 
 
@@ -35,5 +35,5 @@ A simple raycasting engine including :
 - ~~Make map load system compatible with Tiled maps editor~~
 
 #### Other
-- Improve movement feels
 - ~~Add mouse control~~
+- Improve movement feels

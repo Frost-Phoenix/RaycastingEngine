@@ -2,11 +2,11 @@
     "paths" : [
         {
             "index" : 5,
-            "path" : "data/images/textures/wall/CONCRETE_3A.png"
+            "path" : "data/images/textures/wall/tile110.png"
         },
         {
             "index" : 6,
-            "path" : "data/images/textures/wall/CONCRETE_3B.png"
+            "path" : "data/images/textures/wall/tile116.png"
         },
         {
             "index" : 7,

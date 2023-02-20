@@ -35,13 +35,17 @@ void TextureManager::loadAllTextures()
     }
 }
 
-void TextureManager::renderTextureLine(std::shared_ptr<sf::RenderTarget> renderTarget, unsigned short textureId, sf::Vector2f pos, unsigned short columnX, unsigned short width, double height)
+void TextureManager::renderTextureLine(std::shared_ptr<sf::RenderTarget> renderTarget, unsigned short textureId, sf::Vector2f pos, unsigned short columnX, unsigned short width, double height, bool addShadows)
 {
     this->sprites[textureId].setPosition(pos);
     this->sprites[textureId].setTextureRect(sf::IntRect(columnX, 0, 1, TEXTURE_SIZE));
     this->sprites[textureId].setScale(width, height / static_cast<double>(TEXTURE_SIZE));
 
+    if (addShadows) this->sprites[textureId].setColor(sf::Color(175, 175, 175));;
+
     renderTarget->draw(this->sprites[textureId]);
+    
+    if (addShadows) this->sprites[textureId].setColor(sf::Color(255, 255, 255));;
 }
 
 void TextureManager::render(std::shared_ptr<sf::RenderTarget> renderTarget, unsigned short textureId, sf::Vector2f pos)

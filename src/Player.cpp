@@ -42,10 +42,13 @@ void Player::move(std::shared_ptr<MapManager> mapManager)
     sf::Vector2f currentPos = this->sprite.getPosition();
     sf::Vector2f newPos = currentPos;
 
-    double cosSpeed = this->moveSpeed * std::cos(decToRad(this->rotation));
-    double sinSpeed = this->moveSpeed * std::sin(decToRad(this->rotation));
-    double cosSpeedDiagonal = this->moveSpeed * std::cos(decToRad(this->rotation + 45));
-    double sinSpeedDiagonal = this->moveSpeed * std::sin(decToRad(this->rotation + 45));
+    short playerSpeed = this->moveSpeed;
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) playerSpeed *= 1.5;
+
+    double cosSpeed = playerSpeed * std::cos(decToRad(this->rotation));
+    double sinSpeed = playerSpeed * std::sin(decToRad(this->rotation));
+    double cosSpeedDiagonal = playerSpeed * std::cos(decToRad(this->rotation + 45));
+    double sinSpeedDiagonal = playerSpeed * std::sin(decToRad(this->rotation + 45));
 
     // Go up-right
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z) && sf::Keyboard::isKeyPressed(sf::Keyboard::D))

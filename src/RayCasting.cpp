@@ -96,6 +96,7 @@ RayHitInfo RayCasting::castHorizontalRay(std::shared_ptr<MapManager> mapManager,
     else rayHitInfo.length = rayLength;
 
     rayHitInfo.textureId = mapManager->getCellId("walls", rayEndPos);
+    rayHitInfo.addShadows = false;
 
     if (sin_a > 0 && !hitDoor) rayHitInfo.textureCol = TEXTURE_SIZE - 1 - rayHitInfo.textureCol;
     
@@ -150,6 +151,7 @@ RayHitInfo RayCasting::castVerticalRay(std::shared_ptr<MapManager> mapManager, s
             if (collideCellId == MAP_WALL_ID)
             {
                 rayHitInfo.textureCol = static_cast<short>(std::floor(std::fmod(rayEndPos.y, CELL_SIZE) * (TEXTURE_SIZE / CELL_SIZE)));
+                rayHitInfo.addShadows = true;
                 break;   
             } 
             else if (collideCellId == MAP_VERTICAL_DOOR_ID)
@@ -165,6 +167,7 @@ RayHitInfo RayCasting::castVerticalRay(std::shared_ptr<MapManager> mapManager, s
                         hitDoor = true;
                         rayLength += deltaRayLength / 2;
                         rayHitInfo.textureCol = static_cast<short>(std::floor(std::fmod(tmpRayEndPos.y, CELL_SIZE) * 2 - doorOpeningState * (TEXTURE_SIZE / CELL_SIZE)));
+                        rayHitInfo.addShadows = false;
                         break;
                     }
                 }
@@ -244,7 +247,7 @@ void RayCasting::renderFovVisualisation(std::shared_ptr<sf::RenderTarget> render
     renderTarget->draw(this->fovVisualization);
 }
 
-void RayCasting::render(std::shared_ptr<sf::RenderTarget> renderTarget)
+void RayCasting::render(std::shared_ptr<sf::RenderWindow> renderTarget)
 {
     // Distance of the projection 
     double screeDist = (SCREEN_WIDTH / 2) / std::tan(decToRad(FOV / 2));
@@ -279,6 +282,8 @@ void RayCasting::render(std::shared_ptr<sf::RenderTarget> renderTarget)
         short colWidth = next_col_x - current_col_x;
         sf::Vector2f colPos(current_col_x, (SCREEN_HEIGHT / 2.f) - (projectionHeight / 2.f));
         
-        this->textureManager->renderTextureLine(renderTarget, rayHitInfo.textureId, colPos, rayHitInfo.textureCol, colWidth, projectionHeight);
+        this->textureManager->renderTextureLine(renderTarget, rayHitInfo.textureId, colPos, rayHitInfo.textureCol, colWidth, projectionHeight, rayHitInfo.addShadows);
+
+        // renderTarget->display();
     }
 }

@@ -24,6 +24,6 @@ class TextureManager
 
         // Public functions
         void loadAllTextures();
-        void renderTextureLine(std::shared_ptr<sf::RenderTarget> renderTarget, unsigned short textureId, sf::Vector2f pos, unsigned short columnX, unsigned short width, double height);
+        void renderTextureLine(std::shared_ptr<sf::RenderTarget> renderTarget, unsigned short textureId, sf::Vector2f pos, unsigned short columnX, unsigned short width, double height, bool addShadows);
         void render(std::shared_ptr<sf::RenderTarget> renderTarget, unsigned short textureId, sf::Vector2f pos);
 };

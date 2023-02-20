@@ -11,6 +11,7 @@ struct RayHitInfo
     double length;
     unsigned short textureId;
     unsigned short textureCol;
+    bool addShadows;
 };
 
 class RayCasting
@@ -43,5 +44,5 @@ class RayCasting
         
         void renderFovVisualisation(std::shared_ptr<sf::RenderTarget> renderTarget);
         void update(std::shared_ptr<MapManager> mapManager, sf::Vector2f pos, double baseAngle);
-        void render(std::shared_ptr<sf::RenderTarget> renderTarget);
+        void render(std::shared_ptr<sf::RenderWindow> renderTarget);
 };
