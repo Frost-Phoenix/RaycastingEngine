@@ -2,6 +2,8 @@
 bin
 data/images/tmp
 tmp.cpp
+test 
+to-do
 
 # Prerequisites
 *.d

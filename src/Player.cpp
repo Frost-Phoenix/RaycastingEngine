@@ -21,20 +21,29 @@ void Player::initSprite()
 
 void Player::initVariables()
 {
-	this->rotation = 270;
+    this->dir = sf::Vector2f(-1, 0);
     this->actionRange = 25;
 
     this->moveSpeed = 2;
-    this->rotationSpeed = 2;
+    this->rotationSpeed = 0.05;
 }
 
-void Player::checkInputs(sf::Vector2i mousePos)
+void Player::checkInputs(std::shared_ptr<RayCasting> rayCastingEngine, sf::Vector2i mousePos)
 {
     // Player rotaion / view 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))  this->rotation = get_degrees(this->rotation - this->rotationSpeed);
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) this->rotation = get_degrees(this->rotation + this->rotationSpeed);
+    char turnDir = 0;
 
-    this->rotation += (mousePos.x - SCREEN_WIDTH / 2.f) / 5.f;
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) turnDir = -1;
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) turnDir = 1;
+
+    if (turnDir != 0)
+    {
+        double oldDirX = this->dir.x;
+        this->dir.x = this->dir.x * std::cos(this->rotationSpeed * turnDir) - this->dir.y * std::sin(this->rotationSpeed * turnDir);
+        this->dir.y = oldDirX * std::sin(this->rotationSpeed * turnDir) + this->dir.y * std::cos(this->rotationSpeed * turnDir);
+
+        rayCastingEngine->rotatePlane(this->rotationSpeed * turnDir);
+    }
 }
 
 void Player::move(std::shared_ptr<MapManager> mapManager)
@@ -42,13 +51,13 @@ void Player::move(std::shared_ptr<MapManager> mapManager)
     sf::Vector2f currentPos = this->sprite.getPosition();
     sf::Vector2f newPos = currentPos;
 
-    short playerSpeed = this->moveSpeed;
+    float playerSpeed = this->moveSpeed;
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) playerSpeed *= 1.5;
 
-    double cosSpeed = playerSpeed * std::cos(decToRad(this->rotation));
-    double sinSpeed = playerSpeed * std::sin(decToRad(this->rotation));
-    double cosSpeedDiagonal = playerSpeed * std::cos(decToRad(this->rotation + 45));
-    double sinSpeedDiagonal = playerSpeed * std::sin(decToRad(this->rotation + 45));
+    double cosSpeed = playerSpeed * this->dir.x;
+    double sinSpeed = playerSpeed * this->dir.y;
+    double cosSpeedDiagonal = playerSpeed * (this->dir.x * std::cos(decToRad(45)) - this->dir.y * std::sin(decToRad(45))); // cos(a + b) = cos a * cos b - sin a * sin b
+    double sinSpeedDiagonal = playerSpeed * (this->dir.y * std::cos(decToRad(45)) + this->dir.x * std::sin(decToRad(45))); // sin(a + b) = sin a * cas b + cos a * sin b
 
     // Go up-right
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z) && sf::Keyboard::isKeyPressed(sf::Keyboard::D))
@@ -116,7 +125,7 @@ void Player::checkActions(std::shared_ptr<MapManager> mapManager)
 {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
     {
-        sf::Vector2f doorPos((this->sprite.getPosition().x + this->sprite.getLocalBounds().width / 2) + this->actionRange * std::cos(decToRad(this->rotation)), (this->sprite.getPosition().y + this->sprite.getLocalBounds().width / 2) + this->actionRange * std::sin(decToRad(this->rotation)));
+        sf::Vector2f doorPos((this->sprite.getPosition().x + this->sprite.getLocalBounds().width / 2) + this->actionRange * this->dir.x, (this->sprite.getPosition().y + this->sprite.getLocalBounds().width / 2) + this->actionRange * this->dir.y);
         
         if (MAP_VERTICAL_DOOR_ID == mapManager->getCellId("collision", doorPos) || MAP_HORIZONTAL_DOOR_ID == mapManager->getCellId("collision", doorPos))
         {
@@ -137,9 +146,9 @@ const sf::Vector2f Player::getCenterPos() const
     return sf::Vector2f(this->sprite.getPosition().x + this->sprite.getLocalBounds().width / 2, this->sprite.getPosition().y + this->sprite.getLocalBounds().height / 2);
 }
 
-const double Player::getAngle() const
+const sf::Vector2f Player::getDir() const
 {
-    return this->rotation;
+    return this->dir;
 }
 
 const sf::FloatRect Player::getHitbox() const
@@ -154,9 +163,9 @@ void Player::setCenterPos(sf::Vector2f pos)
     this->sprite.setPosition(pos.x - (playerHitbox.width / 2), pos.y - (playerHitbox.height / 2));
 }
 
-void Player::update(std::shared_ptr<MapManager> mapManager, sf::Vector2i mousePos)
+void Player::update(std::shared_ptr<MapManager> mapManager, std::shared_ptr<RayCasting> rayCastingEngine, sf::Vector2i mousePos)
 {
-    this->checkInputs(mousePos);
+    this->checkInputs(rayCastingEngine, mousePos);
     this->move(mapManager);
     this->checkActions(mapManager);
 }
@@ -166,7 +175,7 @@ void Player::renderPlayerDirection(std::shared_ptr<sf::RenderTarget> renderTarge
     sf::VertexArray line(sf::LinesStrip, 2);
     line[0].position = sf::Vector2f(this->sprite.getPosition().x + this->sprite.getLocalBounds().width / 2, this->sprite.getPosition().y + this->sprite.getLocalBounds().height / 2);
     line[0].color = sf::Color::Red;
-    line[1].position = sf::Vector2f((this->sprite.getPosition().x + this->sprite.getLocalBounds().width / 2) + this->actionRange * std::cos(decToRad(this->rotation)), (this->sprite.getPosition().y + this->sprite.getLocalBounds().width / 2) + this->actionRange * std::sin(decToRad(this->rotation)));
+    line[1].position = sf::Vector2f((this->sprite.getPosition().x + this->sprite.getLocalBounds().width / 2) + this->actionRange * this->dir.x, (this->sprite.getPosition().y + this->sprite.getLocalBounds().width / 2) + this->actionRange * this->dir.y);
     line[1].color = sf::Color::Red;
     renderTarget->draw(line);
 }

@@ -1,37 +1,39 @@
 #pragma once
 
-#include "pch.hpp"
 #include "Utils.hpp"
 #include "MapManager.hpp"
 #include "TextureManager.hpp"
 
+class MapManager;
 
 struct RayHitInfo
 {
+    bool hitSide;
     double length;
     unsigned short textureId;
     unsigned short textureCol;
-    bool addShadows;
 };
 
 class RayCasting
 {
     private:
-        // Sprite
+        // Sprite for fov visualization
         sf::VertexArray fovVisualization;
 
-        // Texure manager
+        // Texture manager
         std::unique_ptr<TextureManager> textureManager;
 
         // Variables
         bool drawMap;
-        std::array<RayHitInfo, NB_RAY> raysHitInfos;
+        double screeDist;
+        sf::Vector2f plane; // projection plane
+        std::array<RayHitInfo, SCREEN_WIDTH> raysHitInfos;
 
         // Private functions
-        RayHitInfo castHorizontalRay(std::shared_ptr<MapManager> mapManager, sf::Vector2f pos, double angle);
-        RayHitInfo castVerticalRay(std::shared_ptr<MapManager> mapManager, sf::Vector2f pos, double angle);
-        RayHitInfo castRay(std::shared_ptr<MapManager> mapManager, sf::Vector2f pos, double angle);
+        void castWalls(std::shared_ptr<MapManager> mapManager, const sf::Vector2f playerPos, const sf::Vector2i playerCellPos, const sf::Vector2f playerDir);
 
+        void renderWalls(std::shared_ptr<sf::RenderWindow> renderTarget);
+        
     public:
         // Constructor
         RayCasting(bool drawMap = false);
@@ -40,9 +42,11 @@ class RayCasting
         // Accesors
 
         // Public functions
-        void toogleFovDrawing(bool state);
-        
+        void toogleFovDrawing(const bool state);
+        void rotatePlane(const double rotationSpeed);
+
+        void update(std::shared_ptr<MapManager> mapManager, sf::Vector2f playerPos, const sf::Vector2f playerDir);
+
         void renderFovVisualisation(std::shared_ptr<sf::RenderTarget> renderTarget);
-        void update(std::shared_ptr<MapManager> mapManager, sf::Vector2f pos, double baseAngle);
         void render(std::shared_ptr<sf::RenderWindow> renderTarget);
 };

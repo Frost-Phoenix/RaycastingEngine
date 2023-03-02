@@ -11,6 +11,10 @@ class TextureManager
         std::map<unsigned short, sf::Texture> textures;
         std::map<unsigned short, sf::Sprite> sprites;
 
+        sf::Image screenBuffer;
+        sf::Texture screenTexture;
+        sf::Sprite screen;
+
         // Variables
        
         // Private functions
@@ -24,6 +28,8 @@ class TextureManager
 
         // Public functions
         void loadAllTextures();
-        void renderTextureLine(std::shared_ptr<sf::RenderTarget> renderTarget, unsigned short textureId, sf::Vector2f pos, unsigned short columnX, unsigned short width, double height, bool addShadows);
-        void render(std::shared_ptr<sf::RenderTarget> renderTarget, unsigned short textureId, sf::Vector2f pos);
+        void drawPixel(int x, int y, sf::Color color);
+        void renderTextureLine(std::shared_ptr<sf::RenderTarget> renderTarget, unsigned short textureId, sf::Vector2f pos, unsigned short columnX, double height, bool addShadows);
+        void renderTexture(std::shared_ptr<sf::RenderTarget> renderTarget, unsigned short textureId, sf::Vector2f pos);
+        void renderScreenBuffer(std::shared_ptr<sf::RenderTarget> renderTarget);
 };

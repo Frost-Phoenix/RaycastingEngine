@@ -47,8 +47,7 @@ void Game::initVariables()
 
     this->player = std::shared_ptr<Player>(new Player());
     this->mapManager = std::shared_ptr<MapManager>(new MapManager());
-
-    this->rayCastingEngine = std::unique_ptr<RayCasting>(new RayCasting(this->showMiniMap));
+    this->rayCastingEngine = std::shared_ptr<RayCasting>(new RayCasting(this->showMiniMap));
 
     this->mapManager->loadMap(this->player);
 }
@@ -119,10 +118,8 @@ void Game::update()
     {
         this->updateDeltaTime();
         this->mapManager->update(this->player);
-        this->player->update(this->mapManager, sf::Mouse::getPosition(*this->window.get()));
-        this->rayCastingEngine->update(this->mapManager, this->player->getCenterPos(), this->player->getAngle());
-    
-        sf::Mouse::setPosition(sf::Vector2i(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), *this->window.get());
+        this->player->update(this->mapManager, this->rayCastingEngine, sf::Mouse::getPosition(*this->window.get()));
+        this->rayCastingEngine->update(this->mapManager, this->player->getCenterPos(), this->player->getDir());
     }
 }
 
@@ -135,7 +132,6 @@ void Game::render()
         
         if (this->drawMap)
         {   
-            std::cout << this->drawMap << '\n';
             this->rayCastingEngine->renderFovVisualisation(this->window);
             this->player->render(this->window);
             this->mapManager->render(this->window);

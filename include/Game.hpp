@@ -1,6 +1,5 @@
 #pragma once
 
-#include "pch.hpp"
 #include "Utils.hpp"
 #include "Player.hpp"
 #include "MapManager.hpp"
@@ -23,7 +22,7 @@ class Game
         std::shared_ptr<MapManager> mapManager;
 
         // Raycating engine
-        std::unique_ptr<RayCasting> rayCastingEngine;
+        std::shared_ptr<RayCasting> rayCastingEngine;
         bool drawMap;
         bool showMiniMap;
 

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "pch.hpp"
 #include "Utils.hpp"
 #include "Player.hpp"
 

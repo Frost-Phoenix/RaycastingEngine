@@ -8,10 +8,8 @@
 #define SCREEN_WIDTH  900
 #define SCREEN_HEIGHT 500
 
-constexpr unsigned short FOV = 80;
-constexpr unsigned short NB_RAY = SCREEN_WIDTH;
-constexpr unsigned short MAX_RAY_LEGHT = 1000;
-constexpr float DELTA_ANGLE = static_cast<float>(FOV) / static_cast<float>(NB_RAY);
+constexpr unsigned short FOV = 70;
+constexpr unsigned short MAX_RAY_LEGHT = 100;
 
 #define MAP_PLAYER_ID 1
 #define MAP_WALL_ID 2

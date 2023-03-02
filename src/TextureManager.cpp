@@ -4,6 +4,10 @@
 // Constructor
 TextureManager::TextureManager()
 {
+    this->screenBuffer.create(SCREEN_WIDTH, SCREEN_HEIGHT, sf::Color(255, 255, 255, 0));
+    this->screenTexture.create(SCREEN_WIDTH, SCREEN_HEIGHT);
+    this->screen.setTexture(this->screenTexture);
+
     this->loadAllTextures();
 }
 
@@ -35,24 +39,39 @@ void TextureManager::loadAllTextures()
     }
 }
 
-void TextureManager::renderTextureLine(std::shared_ptr<sf::RenderTarget> renderTarget, unsigned short textureId, sf::Vector2f pos, unsigned short columnX, unsigned short width, double height, bool addShadows)
+void TextureManager::drawPixel(int x, int y, sf::Color color)
+{
+    this->screenBuffer.setPixel(x, y, color);
+}
+
+void TextureManager::renderTextureLine(std::shared_ptr<sf::RenderTarget> renderTarget, unsigned short textureId, sf::Vector2f pos, unsigned short columnX, double height, bool addShadows)
 {
     this->sprites[textureId].setPosition(pos);
     this->sprites[textureId].setTextureRect(sf::IntRect(columnX, 0, 1, TEXTURE_SIZE));
-    this->sprites[textureId].setScale(width, height / static_cast<double>(TEXTURE_SIZE));
-
-    if (addShadows) this->sprites[textureId].setColor(sf::Color(175, 175, 175));;
+    this->sprites[textureId].setScale(1, height / static_cast<double>(TEXTURE_SIZE));
+    
+    if (addShadows) this->sprites[textureId].setColor(sf::Color(175, 175, 175));
 
     renderTarget->draw(this->sprites[textureId]);
     
-    if (addShadows) this->sprites[textureId].setColor(sf::Color(255, 255, 255));;
+    if (addShadows) this->sprites[textureId].setColor(sf::Color(255, 255, 255));
 }
 
-void TextureManager::render(std::shared_ptr<sf::RenderTarget> renderTarget, unsigned short textureId, sf::Vector2f pos)
+void TextureManager::renderTexture(std::shared_ptr<sf::RenderTarget> renderTarget, unsigned short textureId, sf::Vector2f pos)
 {
     this->sprites[textureId].setPosition(pos);
     this->sprites[textureId].setTextureRect(sf::IntRect(0, 0, TEXTURE_SIZE, TEXTURE_SIZE));
     this->sprites[textureId].setScale(1, 1);
 
     renderTarget->draw(this->sprites[textureId]);
+}
+
+void TextureManager::renderScreenBuffer(std::shared_ptr<sf::RenderTarget> renderTarget)
+{
+    this->screenTexture.update(this->screenBuffer.getPixelsPtr());
+
+    renderTarget->draw(this->screen);
+
+    // Clear the buffer
+    this->screenBuffer.create(SCREEN_WIDTH, SCREEN_HEIGHT, sf::Color(255, 255, 255, 0));
 }

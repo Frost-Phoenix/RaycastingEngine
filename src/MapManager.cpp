@@ -116,7 +116,6 @@ short MapManager::getCellId(std::string layer, sf::Vector2f pos)
 bool MapManager::chekPointCollision(sf::Vector2f pos, bool checkDoorCollision)
 {
     unsigned short cellId = this->getCellId("collision", pos);
-    sf::Vector2i cellPos = this->getCellPos(pos);
 
     if (cellId != 0)
     {
@@ -132,6 +131,8 @@ bool MapManager::chekPointCollision(sf::Vector2f pos, bool checkDoorCollision)
             } 
             else if (cellId == MAP_VERTICAL_DOOR_ID || cellId == MAP_HORIZONTAL_DOOR_ID)
             {
+                sf::Vector2i cellPos = this->getCellPos(pos);
+
                 if (this->doors[{cellPos.y, cellPos.x}].isOpen == false)
                 {
                     return true;
