@@ -15,3 +15,5 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
+
+using sf::Vector2f, sf::Vector2i;

@@ -3,6 +3,8 @@
 #include "pch.hpp"
 
 
+typedef sf::Vector2<double> Vector2d;
+
 #define CELL_SIZE 32
 #define TEXTURE_SIZE 64
 #define SCREEN_WIDTH  900

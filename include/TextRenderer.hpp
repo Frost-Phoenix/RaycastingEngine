@@ -25,7 +25,7 @@ class TextRenderer
         // Public functions
         void setTextSize(const unsigned short& size);
         void setTextColor(const sf::Color& color);
-        void setTextPosition(const sf::Vector2f& pos);
+        void setTextPosition(const Vector2f& pos);
         
         void renderTxt(std::shared_ptr<sf::RenderTarget> renderTarget, const std::string& txt);
 };

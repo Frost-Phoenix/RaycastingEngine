@@ -21,14 +21,14 @@ void Player::initSprite()
 
 void Player::initVariables()
 {
-    this->dir = sf::Vector2f(-1, 0);
+    this->dir = Vector2f(-1, 0);
     this->actionRange = 25;
 
     this->moveSpeed = 2;
     this->rotationSpeed = 0.05;
 }
 
-void Player::checkInputs(std::shared_ptr<RayCasting> rayCastingEngine, sf::Vector2i mousePos)
+void Player::checkInputs(std::shared_ptr<RayCasting> rayCastingEngine, Vector2i mousePos)
 {
     // Player rotaion / view 
     char turnDir = 0;
@@ -48,8 +48,8 @@ void Player::checkInputs(std::shared_ptr<RayCasting> rayCastingEngine, sf::Vecto
 
 void Player::move(std::shared_ptr<MapManager> mapManager)
 {
-    sf::Vector2f currentPos = this->sprite.getPosition();
-    sf::Vector2f newPos = currentPos;
+    Vector2f currentPos = this->sprite.getPosition();
+    Vector2f newPos = currentPos;
 
     float playerSpeed = this->moveSpeed;
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) playerSpeed *= 1.5;
@@ -125,28 +125,28 @@ void Player::checkActions(std::shared_ptr<MapManager> mapManager)
 {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
     {
-        sf::Vector2f doorPos((this->sprite.getPosition().x + this->sprite.getLocalBounds().width / 2) + this->actionRange * this->dir.x, (this->sprite.getPosition().y + this->sprite.getLocalBounds().width / 2) + this->actionRange * this->dir.y);
+        Vector2f doorPos((this->sprite.getPosition().x + this->sprite.getLocalBounds().width / 2) + this->actionRange * this->dir.x, (this->sprite.getPosition().y + this->sprite.getLocalBounds().width / 2) + this->actionRange * this->dir.y);
         
         if (MAP_VERTICAL_DOOR_ID == mapManager->getCellId("collision", doorPos) || MAP_HORIZONTAL_DOOR_ID == mapManager->getCellId("collision", doorPos))
         {
-            sf::Vector2i doorCellPos = mapManager->getCellPos(doorPos);
+            Vector2i doorCellPos = mapManager->getCellPos(doorPos);
             mapManager->openDoor(doorCellPos);
         }    
     }
 }
 
 // Accesors
-const sf::Vector2f Player::getPos() const
+const Vector2f Player::getPos() const
 {
     return this->sprite.getPosition();
 }
 
-const sf::Vector2f Player::getCenterPos() const
+const Vector2f Player::getCenterPos() const
 {
-    return sf::Vector2f(this->sprite.getPosition().x + this->sprite.getLocalBounds().width / 2, this->sprite.getPosition().y + this->sprite.getLocalBounds().height / 2);
+    return Vector2f(this->sprite.getPosition().x + this->sprite.getLocalBounds().width / 2, this->sprite.getPosition().y + this->sprite.getLocalBounds().height / 2);
 }
 
-const sf::Vector2f Player::getDir() const
+const Vector2f Player::getDir() const
 {
     return this->dir;
 }
@@ -157,13 +157,13 @@ const sf::FloatRect Player::getHitbox() const
 }
 
 // Public functions
-void Player::setCenterPos(sf::Vector2f pos)
+void Player::setCenterPos(Vector2f pos)
 {
     sf::FloatRect playerHitbox = this->sprite.getGlobalBounds();
     this->sprite.setPosition(pos.x - (playerHitbox.width / 2), pos.y - (playerHitbox.height / 2));
 }
 
-void Player::update(std::shared_ptr<MapManager> mapManager, std::shared_ptr<RayCasting> rayCastingEngine, sf::Vector2i mousePos)
+void Player::update(std::shared_ptr<MapManager> mapManager, std::shared_ptr<RayCasting> rayCastingEngine, Vector2i mousePos)
 {
     this->checkInputs(rayCastingEngine, mousePos);
     this->move(mapManager);
@@ -173,9 +173,9 @@ void Player::update(std::shared_ptr<MapManager> mapManager, std::shared_ptr<RayC
 void Player::renderPlayerDirection(std::shared_ptr<sf::RenderTarget> renderTarget)
 {
     sf::VertexArray line(sf::LinesStrip, 2);
-    line[0].position = sf::Vector2f(this->sprite.getPosition().x + this->sprite.getLocalBounds().width / 2, this->sprite.getPosition().y + this->sprite.getLocalBounds().height / 2);
+    line[0].position = Vector2f(this->sprite.getPosition().x + this->sprite.getLocalBounds().width / 2, this->sprite.getPosition().y + this->sprite.getLocalBounds().height / 2);
     line[0].color = sf::Color::Red;
-    line[1].position = sf::Vector2f((this->sprite.getPosition().x + this->sprite.getLocalBounds().width / 2) + this->actionRange * this->dir.x, (this->sprite.getPosition().y + this->sprite.getLocalBounds().width / 2) + this->actionRange * this->dir.y);
+    line[1].position = Vector2f((this->sprite.getPosition().x + this->sprite.getLocalBounds().width / 2) + this->actionRange * this->dir.x, (this->sprite.getPosition().y + this->sprite.getLocalBounds().width / 2) + this->actionRange * this->dir.y);
     line[1].color = sf::Color::Red;
     renderTarget->draw(line);
 }

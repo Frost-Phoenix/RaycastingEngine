@@ -57,18 +57,18 @@ class MapManager
         // Accesors
         unsigned short getMapWidth();
         unsigned short getMapHeight();
-        sf::Vector2i getCellPos(sf::Vector2f pos);
-        short getCellId(std::string layer, sf::Vector2f pos);
-        float getDoorOpeningState(sf::Vector2i cellPos);
+        Vector2i getCellPos(Vector2f pos);
+        short getCellId(std::string layer, Vector2f pos);
+        float getDoorOpeningState(Vector2i cellPos);
 
         // Public functions
         void loadMap(std::shared_ptr<Player> player);
         
-        bool chekPointCollision(sf::Vector2f pos, bool checkDoorCollision = false);
-        bool chekRectCollision(sf::Vector2f pos, sf::FloatRect rect, bool checkDoorCollision = false);
-        sf::Vector2f getNewPosition(sf::Vector2f pos, sf::Vector2f currentPos, sf::FloatRect rect);
+        bool chekPointCollision(Vector2f pos, bool checkDoorCollision = false);
+        bool chekRectCollision(Vector2f pos, sf::FloatRect rect, bool checkDoorCollision = false);
+        Vector2f getNewPosition(Vector2f pos, Vector2f currentPos, sf::FloatRect rect);
 
-        void openDoor(sf::Vector2i doorCellPos);
+        void openDoor(Vector2i doorCellPos);
         
         void update(std::shared_ptr<Player> player);
         void render(std::shared_ptr<sf::RenderTarget> renderTarget);

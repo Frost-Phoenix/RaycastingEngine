@@ -27,10 +27,10 @@ void Game::initWindow()
     sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
     
     this->window = std::shared_ptr<sf::RenderWindow>(new sf::RenderWindow(videoMode, "Game", sf::Style::Titlebar | sf::Style::Close, settings));
-    this-> window->setPosition(sf::Vector2i(desktop.width / 2 - window->getSize().x / 2, desktop.height / 2 - window->getSize().y / 2));
+    this-> window->setPosition(Vector2i(desktop.width / 2 - window->getSize().x / 2, desktop.height / 2 - window->getSize().y / 2));
 
     this->window->setMouseCursorVisible(false);
-    sf::Mouse::setPosition(sf::Vector2i(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), *this->window.get());
+    sf::Mouse::setPosition(Vector2i(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), *this->window.get());
 
     this->window->setVerticalSyncEnabled(false);
     this->window->setFramerateLimit(60);
@@ -82,7 +82,7 @@ void Game::drawMiniMap()
     this->window->setView(miniMap);
 
     sf::RectangleShape bg;
-    bg.setSize(sf::Vector2f(CELL_SIZE * this->mapManager->getMapWidth(), CELL_SIZE * this->mapManager->getMapHeight()));
+    bg.setSize(Vector2f(CELL_SIZE * this->mapManager->getMapWidth(), CELL_SIZE * this->mapManager->getMapHeight()));
     bg.setFillColor(sf::Color(20, 20, 20));
     this->window->draw(bg);
 
@@ -97,8 +97,8 @@ void Game::drawFloor()
 {
     sf::RectangleShape floor;
     floor.setFillColor(sf::Color(10, 2, 0));
-    floor.setPosition(sf::Vector2f(0, SCREEN_HEIGHT / 2));
-    floor.setSize(sf::Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT / 2));
+    floor.setPosition(Vector2f(0, SCREEN_HEIGHT / 2));
+    floor.setSize(Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT / 2));
 
     this->window->draw(floor);
 }

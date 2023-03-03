@@ -75,7 +75,7 @@ void MapManager::loadMapFromJson(std::shared_ptr<Player> player)
                 {
                     if (layer["data"][row * this->mapWidth + col].asInt() == MAP_PLAYER_ID)
                     {
-                        player->setCenterPos(sf::Vector2f(col * CELL_SIZE + CELL_SIZE / 2, row * CELL_SIZE + CELL_SIZE / 2));
+                        player->setCenterPos(Vector2f(col * CELL_SIZE + CELL_SIZE / 2, row * CELL_SIZE + CELL_SIZE / 2));
                     }
                 }
             }
@@ -94,14 +94,14 @@ unsigned short MapManager::getMapHeight()
     return this->mapHeight;
 }
 
-sf::Vector2i MapManager::getCellPos(sf::Vector2f pos)
+Vector2i MapManager::getCellPos(Vector2f pos)
 {
-    return sf::Vector2i(static_cast<int>(pos.x / CELL_SIZE), static_cast<int>(pos.y / CELL_SIZE));
+    return Vector2i(static_cast<int>(pos.x / CELL_SIZE), static_cast<int>(pos.y / CELL_SIZE));
 }
 
-short MapManager::getCellId(std::string layer, sf::Vector2f pos)
+short MapManager::getCellId(std::string layer, Vector2f pos)
 {
-    sf::Vector2i cellPos = this->getCellPos(pos);
+    Vector2i cellPos = this->getCellPos(pos);
 
     if (0 <= cellPos.x && this->mapWidth > cellPos.x && 0 <= cellPos.y && this->mapHeight > cellPos.y)
     {
@@ -113,7 +113,7 @@ short MapManager::getCellId(std::string layer, sf::Vector2f pos)
 }
 
 /* Check if a point is in a non walkables cell */
-bool MapManager::chekPointCollision(sf::Vector2f pos, bool checkDoorCollision)
+bool MapManager::chekPointCollision(Vector2f pos, bool checkDoorCollision)
 {
     unsigned short cellId = this->getCellId("collision", pos);
 
@@ -131,7 +131,7 @@ bool MapManager::chekPointCollision(sf::Vector2f pos, bool checkDoorCollision)
             } 
             else if (cellId == MAP_VERTICAL_DOOR_ID || cellId == MAP_HORIZONTAL_DOOR_ID)
             {
-                sf::Vector2i cellPos = this->getCellPos(pos);
+                Vector2i cellPos = this->getCellPos(pos);
 
                 if (this->doors[{cellPos.y, cellPos.x}].isOpen == false)
                 {
@@ -145,33 +145,33 @@ bool MapManager::chekPointCollision(sf::Vector2f pos, bool checkDoorCollision)
 }
 
 /* Check if a rect is on walkables cells */
-bool MapManager::chekRectCollision(sf::Vector2f pos, sf::FloatRect rect, bool checkDoorCollision)
+bool MapManager::chekRectCollision(Vector2f pos, sf::FloatRect rect, bool checkDoorCollision)
 {
     // Check th four corner of the rect
     
     // Corner top-left
     if (this->chekPointCollision(pos, checkDoorCollision) == true) return true;
     // Corner top-right
-    if (this->chekPointCollision(sf::Vector2f(pos.x + rect.width, pos.y), checkDoorCollision) == true) return true;
+    if (this->chekPointCollision(Vector2f(pos.x + rect.width, pos.y), checkDoorCollision) == true) return true;
     // Corner botom-left
-    if (this->chekPointCollision(sf::Vector2f(pos.x, pos.y + rect.height), checkDoorCollision) == true) return true;
+    if (this->chekPointCollision(Vector2f(pos.x, pos.y + rect.height), checkDoorCollision) == true) return true;
     // Corner botom-right
-    if (this->chekPointCollision(sf::Vector2f(pos.x + rect.width, pos.y + rect.height), checkDoorCollision) == true) return true;
+    if (this->chekPointCollision(Vector2f(pos.x + rect.width, pos.y + rect.height), checkDoorCollision) == true) return true;
 
     return false;
 }
 
 /* Get position of a rect at close as possible of the non walkables cells */
-sf::Vector2f MapManager::getNewPosition(sf::Vector2f nextPos, sf::Vector2f currentPos, sf::FloatRect rect)
+Vector2f MapManager::getNewPosition(Vector2f nextPos, Vector2f currentPos, sf::FloatRect rect)
 {
     // if cannot directly move on both axes
     if (this->chekRectCollision(nextPos, rect) == true)
     {
         // Can move on x but not on y, so put the closest to wall on y
-        if (this->chekRectCollision(sf::Vector2f(nextPos.x, currentPos.y), rect) == false)
+        if (this->chekRectCollision(Vector2f(nextPos.x, currentPos.y), rect) == false)
         {
             // Bottom collide
-            if (this->chekPointCollision(sf::Vector2f(nextPos.x, nextPos.y + rect.height)) || this->chekPointCollision(sf::Vector2f(nextPos.x + rect.width, nextPos.y + rect.height)))
+            if (this->chekPointCollision(Vector2f(nextPos.x, nextPos.y + rect.height)) || this->chekPointCollision(Vector2f(nextPos.x + rect.width, nextPos.y + rect.height)))
             {
                 nextPos.y = (CELL_SIZE * std::floor(currentPos.y / CELL_SIZE)) + (CELL_SIZE - rect.height - 0.01);
             }
@@ -179,10 +179,10 @@ sf::Vector2f MapManager::getNewPosition(sf::Vector2f nextPos, sf::Vector2f curre
 
         }
         // Can move on y but not on x, so put the closest to wall on x
-        else if (this->chekRectCollision(sf::Vector2f(currentPos.x, nextPos.y), rect) == false)
+        else if (this->chekRectCollision(Vector2f(currentPos.x, nextPos.y), rect) == false)
         {
             // Right collide
-            if (this->chekPointCollision(sf::Vector2f(nextPos.x + rect.width, nextPos.y)) || this->chekPointCollision(sf::Vector2f(nextPos.x + rect.width, nextPos.y + rect.height)))
+            if (this->chekPointCollision(Vector2f(nextPos.x + rect.width, nextPos.y)) || this->chekPointCollision(Vector2f(nextPos.x + rect.width, nextPos.y + rect.height)))
             {
                 nextPos.x = (CELL_SIZE * std::floor(currentPos.x / CELL_SIZE)) + (CELL_SIZE - rect.width - 0.01);
             }
@@ -193,7 +193,7 @@ sf::Vector2f MapManager::getNewPosition(sf::Vector2f nextPos, sf::Vector2f curre
         else
         {
             // Bottom collide
-            if (this->chekPointCollision(sf::Vector2f(currentPos.x, nextPos.y + rect.height)) || this->chekPointCollision(sf::Vector2f(currentPos.x + rect.width, nextPos.y + rect.height)))
+            if (this->chekPointCollision(Vector2f(currentPos.x, nextPos.y + rect.height)) || this->chekPointCollision(Vector2f(currentPos.x + rect.width, nextPos.y + rect.height)))
             {
                 nextPos.y = (CELL_SIZE * std::floor(currentPos.y / CELL_SIZE)) + (CELL_SIZE - rect.height - 0.01);
             }
@@ -201,7 +201,7 @@ sf::Vector2f MapManager::getNewPosition(sf::Vector2f nextPos, sf::Vector2f curre
             else nextPos.y = CELL_SIZE * std::floor(currentPos.y / CELL_SIZE);
 
             // Right collide
-            if (this->chekPointCollision(sf::Vector2f(nextPos.x + rect.width, currentPos.y)) || this->chekPointCollision(sf::Vector2f(nextPos.x + rect.width, currentPos.y + rect.height)))
+            if (this->chekPointCollision(Vector2f(nextPos.x + rect.width, currentPos.y)) || this->chekPointCollision(Vector2f(nextPos.x + rect.width, currentPos.y + rect.height)))
             {
                 nextPos.x = (CELL_SIZE * std::floor(currentPos.x / CELL_SIZE)) + (CELL_SIZE - rect.width - 0.01);
             }
@@ -219,12 +219,12 @@ void MapManager::loadMap(std::shared_ptr<Player> player)
     this->loadMapFromJson(player);
 }
 
-float MapManager::getDoorOpeningState(sf::Vector2i cellPos)
+float MapManager::getDoorOpeningState(Vector2i cellPos)
 {
     return this->doors[{cellPos.y, cellPos.x}].openingState;
 }
 
-void MapManager::openDoor(sf::Vector2i doorCellPos)
+void MapManager::openDoor(Vector2i doorCellPos)
 {
     DoorInfo& door = this->doors[{doorCellPos.y, doorCellPos.x}];
     
@@ -287,14 +287,14 @@ void MapManager::renderMap(std::shared_ptr<sf::RenderTarget> renderTarget)
             switch (this->map["collision"][row][col])
             {
                 case MAP_WALL_ID:
-                    this->wallCellSprite.setPosition(sf::Vector2f(col * CELL_SIZE, row * CELL_SIZE));
+                    this->wallCellSprite.setPosition(Vector2f(col * CELL_SIZE, row * CELL_SIZE));
                     renderTarget->draw(this->wallCellSprite);
                     break;
 
                 case MAP_HORIZONTAL_DOOR_ID:
                     if (this->doors[{row, col}].isOpen == false)
                     {
-                        this->horizontalDoorCellSprite.setPosition(sf::Vector2f(col * CELL_SIZE, row * CELL_SIZE));
+                        this->horizontalDoorCellSprite.setPosition(Vector2f(col * CELL_SIZE, row * CELL_SIZE));
                         renderTarget->draw(this->horizontalDoorCellSprite);
                     }
                     break;
@@ -302,7 +302,7 @@ void MapManager::renderMap(std::shared_ptr<sf::RenderTarget> renderTarget)
                 case MAP_VERTICAL_DOOR_ID:
                     if (this->doors[{row, col}].isOpen == false)
                     {
-                        this->verticalDoorCellSprite.setPosition(sf::Vector2f(col * CELL_SIZE, row * CELL_SIZE));
+                        this->verticalDoorCellSprite.setPosition(Vector2f(col * CELL_SIZE, row * CELL_SIZE));
                         renderTarget->draw(this->verticalDoorCellSprite);
                     }
                     break;

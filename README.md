@@ -22,7 +22,8 @@ A simple raycasting engine including :
 - ~~Add doors~~
 - ~~Add doors animations~~
 - ~~Add basic shadows on walls~~
-- Add floor casting (with textures)
+- ~~Add floor casting~~
+- Add floor textures mapping
 - Add ceiling casting (with textures)
 - Add transparent textures suport 
 - Add more type of thin walls suprot (not just in the midle of a tile)

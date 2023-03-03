@@ -31,7 +31,7 @@ void TextRenderer::setTextColor(const sf::Color& color)
     this->text.setOutlineColor(color);
 }
 
-void TextRenderer::setTextPosition(const sf::Vector2f& pos)
+void TextRenderer::setTextPosition(const Vector2f& pos)
 {
     this->text.setPosition(pos);
 }

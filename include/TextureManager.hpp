@@ -29,7 +29,7 @@ class TextureManager
         // Public functions
         void loadAllTextures();
         void drawPixel(int x, int y, sf::Color color);
-        void renderTextureLine(std::shared_ptr<sf::RenderTarget> renderTarget, unsigned short textureId, sf::Vector2f pos, unsigned short columnX, double height, bool addShadows);
-        void renderTexture(std::shared_ptr<sf::RenderTarget> renderTarget, unsigned short textureId, sf::Vector2f pos);
+        void renderTextureLine(std::shared_ptr<sf::RenderTarget> renderTarget, unsigned short textureId, Vector2f pos, unsigned short columnX, double height, bool addShadows);
+        void renderTexture(std::shared_ptr<sf::RenderTarget> renderTarget, unsigned short textureId, Vector2f pos);
         void renderScreenBuffer(std::shared_ptr<sf::RenderTarget> renderTarget);
 };
