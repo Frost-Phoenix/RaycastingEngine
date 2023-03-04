@@ -18,42 +18,6 @@ RayCasting::~RayCasting()
     
 }
 
-// Private functions
-    // while (rayLength < MAX_RAY_LEGHT)
-    // {
-    //     // If the ray hit a wall we stop expending the ray
-    //     if (mapManager->chekPointCollision(rayEndPos))
-    //     {
-    //         short collideCellId = mapManager->getCellId("collision", rayEndPos);
-            
-    //         if (collideCellId == MAP_WALL_ID)
-    //         {
-    //             rayHitInfo.textureCol = static_cast<short>(std::floor(std::fmod(rayEndPos.y, CELL_SIZE) * (TEXTURE_SIZE / CELL_SIZE)));
-    //             // rayHitInfo.addShadows = true;
-    //             break;   
-    //         } 
-    //         else if (collideCellId == MAP_VERTICAL_DOOR_ID)
-    //         {
-    //             Vector2d tmpRayEndPos(rayEndPos.x + step.x / 2, rayEndPos.y + step.y / 2);
-
-    //             if (mapManager->chekPointCollision(tmpRayEndPos) && mapManager->getCellId("collision", tmpRayEndPos) == MAP_VERTICAL_DOOR_ID)
-    //             {
-    //                 double doorOpeningState = mapManager->getDoorOpeningState(mapManager->getCellPos(tmpRayEndPos));
-                    
-    //                 if (std::fmod(tmpRayEndPos.y, CELL_SIZE) > doorOpeningState)
-    //                 {
-    //                     hitDoor = true;
-    //                     rayLength += deltaRayLength / 2;
-    //                     rayHitInfo.textureCol = static_cast<short>(std::floor(std::fmod(tmpRayEndPos.y, CELL_SIZE) * 2 - doorOpeningState * (TEXTURE_SIZE / CELL_SIZE)));
-    //                     // rayHitInfo.addShadows = false;
-    //                     break;
-    //                 }
-    //             }
-    //         }
-    //     }
-
-    // if (cos_a < 0 && !hitDoor) rayHitInfo.textureCol = TEXTURE_SIZE - 1 - rayHitInfo.textureCol;
-
 void RayCasting::castWalls(std::shared_ptr<MapManager> mapManager, const Vector2f playerPos, const Vector2i playerCellPos, const Vector2f playerDir)
 {
     RayHitInfo rayHitInfo;
@@ -64,7 +28,7 @@ void RayCasting::castWalls(std::shared_ptr<MapManager> mapManager, const Vector2
         //calculate ray position and direction
         double cameraX = 2 * (SCREEN_WIDTH - x) / (double)SCREEN_WIDTH - 1; //x-coordinate in camera space
 
-        sf::Vector2<double> rayDir;
+        Vector2d rayDir;
         rayDir.x = playerDir.x + this->plane.x * cameraX;
         rayDir.y = playerDir.y + this->plane.y * cameraX;
 
@@ -103,6 +67,8 @@ void RayCasting::castWalls(std::shared_ptr<MapManager> mapManager, const Vector2
             sideDist.y = (cellPos.y + 1.0 - playerPos.y) * deltaDist.y;
         }
 
+        bool hitDoor = false;
+
         //perform DDA
         while (true)
         {
@@ -119,8 +85,68 @@ void RayCasting::castWalls(std::shared_ptr<MapManager> mapManager, const Vector2
                 cellPos.y += step.y;
                 rayHitInfo.hitSide = 1;
             }
-            //Check if ray has hit a wall
-            if (mapManager->chekPointCollision(Vector2f(cellPos.x * CELL_SIZE, cellPos.y * CELL_SIZE))) break;
+            
+            // Check ray collision
+            if (mapManager->chekPointCollision(Vector2f(cellPos.x * CELL_SIZE, cellPos.y * CELL_SIZE)))
+            {
+                short collideCellId = mapManager->getCellId("collision", Vector2f(cellPos.x * CELL_SIZE, cellPos.y * CELL_SIZE));
+                
+                if (collideCellId == MAP_WALL_ID)
+                {
+                    break;   
+                } 
+                else if ((collideCellId == MAP_HORIZONTAL_DOOR_ID || collideCellId == MAP_VERTICAL_DOOR_ID))
+                {
+                    Vector2f tmpRayEndPos;
+                    
+                    if (rayHitInfo.hitSide == 0)
+                    {
+                        tmpRayEndPos.x = (playerPos.x + (sideDist.x + deltaDist.x / 2 - deltaDist.x) * rayDir.x) * CELL_SIZE;
+                        tmpRayEndPos.y = (playerPos.y + (sideDist.x + deltaDist.x / 2 - deltaDist.x) * rayDir.y) * CELL_SIZE;
+                    }
+                    else
+                    {
+                        tmpRayEndPos.x = (playerPos.x + (sideDist.y + deltaDist.y / 2 - deltaDist.y) * rayDir.x) * CELL_SIZE;
+                        tmpRayEndPos.y = (playerPos.y + (sideDist.y + deltaDist.y / 2 - deltaDist.y) * rayDir.y) * CELL_SIZE;
+                    }
+                    
+                    collideCellId = mapManager->getCellId("collision", tmpRayEndPos);
+
+                    if (mapManager->chekPointCollision(tmpRayEndPos) && (collideCellId == MAP_HORIZONTAL_DOOR_ID || collideCellId == MAP_VERTICAL_DOOR_ID))
+                    {
+                        float doorOpeningState = mapManager->getDoorOpeningState(mapManager->getCellPos(tmpRayEndPos));
+
+                        double tmpDeltaCell;
+                        
+                        if (rayHitInfo.hitSide == 0)
+                        {
+                            tmpDeltaCell = std::fmod(tmpRayEndPos.y, CELL_SIZE);
+                        }
+                        else
+                        {
+                            tmpDeltaCell = std::fmod(tmpRayEndPos.x, CELL_SIZE);
+                        }
+                        
+                        if (tmpDeltaCell > doorOpeningState)
+                        {
+                            hitDoor = true;
+                            
+                            if (rayHitInfo.hitSide == 0)
+                            {
+                                sideDist.x += deltaDist.x / 2;
+                            }
+                            else
+                            {
+                                sideDist.y += deltaDist.y / 2;
+                            }
+
+                            rayHitInfo.textureCol = (short)(std::floor(tmpDeltaCell * 2 - doorOpeningState * (TEXTURE_SIZE / CELL_SIZE)));
+
+                            break;
+                        }
+                    }
+                }
+            }
         }
 
         //Calculate distance of perpendicular ray (Euclidean distance would give fisheye effect!)
@@ -137,7 +163,7 @@ void RayCasting::castWalls(std::shared_ptr<MapManager> mapManager, const Vector2
         deltaCell -= std::floor(deltaCell);
 
         //x coordinate on the texture
-        rayHitInfo.textureCol = short(deltaCell * double(TEXTURE_SIZE));
+        if (!hitDoor) rayHitInfo.textureCol = short(deltaCell * double(TEXTURE_SIZE));
 
         // colision on vertical rayHitInfo.hitSide
         if (rayHitInfo.hitSide == 0)
@@ -145,7 +171,7 @@ void RayCasting::castWalls(std::shared_ptr<MapManager> mapManager, const Vector2
             if (rayDir.x < 0)
             {
                 rayEndPos.x -= 0.001;
-                rayHitInfo.textureCol = TEXTURE_SIZE - rayHitInfo.textureCol - 1;
+                if (!hitDoor) rayHitInfo.textureCol = TEXTURE_SIZE - rayHitInfo.textureCol - 1;
             }
             else
             {
@@ -158,7 +184,7 @@ void RayCasting::castWalls(std::shared_ptr<MapManager> mapManager, const Vector2
             if (rayDir.y > 0)
             {
                 rayEndPos.y += 0.001;
-                rayHitInfo.textureCol = TEXTURE_SIZE - rayHitInfo.textureCol - 1;
+                if (!hitDoor) rayHitInfo.textureCol = TEXTURE_SIZE - rayHitInfo.textureCol - 1;
             }
             else
             {
