@@ -2,7 +2,7 @@
 
 A c++ raycasting engine made with SFML
 
-![Alt text](data/images/screenshot/1.png?raw=true "Title")
+![Alt text](data/images/screenshot/screenshot.png?raw=true "Title")
 
 ## Current State 
  
@@ -22,14 +22,14 @@ A simple raycasting engine including :
 - ~~Add doors~~
 - ~~Add doors animations~~
 - ~~Add basic shadows on walls~~
-- ~~Add floor casting~~
-- Add floor textures mapping
-- Add ceiling casting (with textures)
+- ~~Add floor / ceiling casting~~
+- Add floor / ceiling textures mapping
+- Add sky texture (for bg illusion)
 - Add transparent textures suport 
 - Add more type of thin walls suprot (not just in the midle of a tile)
-- Add sky texture (for bg illusion)
 - Add sprites  
 - Add enimies 
+- Add gun logic with multiple gun types
 
 #### Map
 - ~~Change map system (load / storing data)~~
