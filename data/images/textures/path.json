@@ -2,15 +2,48 @@
     "paths" : [
         {
             "index" : 5,
+            "type" : "wall",
             "path" : "data/images/textures/wall/tile110.png"
         },
         {
             "index" : 6,
+            "type" : "wall",
             "path" : "data/images/textures/wall/tile116.png"
         },
         {
             "index" : 7,
+            "type" : "door",
             "path" : "data/images/textures/door/DOOR_2A.png"
+        },
+        {
+            "index" : 8,
+            "type" : "ceiling",
+            "path" : "data/images/textures/floor_ceiling/tile097.png"
+        },
+        {
+            "index" : 9,
+            "type" : "ceiling",
+            "path" : "data/images/textures/floor_ceiling/tile114.png"
+        },
+        {
+            "index" : 12,
+            "type" : "floor",
+            "path" : "data/images/textures/floor_ceiling/tile113.png"
+        },
+        {
+            "index" : 13,
+            "type" : "floor",
+            "path" : "data/images/textures/floor_ceiling/tile117.png"
+        },
+        {
+            "index" : 14,
+            "type" : "floor",
+            "path" : "data/images/textures/floor_ceiling/tile103.png"
+        },
+        {
+            "index" : 15,
+            "type" : "floor",
+            "path" : "data/images/textures/floor_ceiling/tile100.png"
         }
     ]   
 }

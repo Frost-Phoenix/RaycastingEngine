@@ -7,11 +7,17 @@ typedef sf::Vector2<double> Vector2d;
 
 #define CELL_SIZE 32
 #define TEXTURE_SIZE 64
-#define SCREEN_WIDTH  900
-#define SCREEN_HEIGHT 500
+#define SCREEN_WIDTH  960
+#define SCREEN_HEIGHT 540
 
 constexpr unsigned short FOV = 70;
 constexpr unsigned short MAX_RAY_LEGHT = 100;
+
+#define MAP_COLLISION_LAYER 0
+#define MAP_WALL_LAYER 1
+#define MAP_FLOOR_LAYER 2
+#define MAP_CEILING_LAYER 3
+#define MAP_PLAYER_LAYER 4
 
 #define MAP_PLAYER_ID 1
 #define MAP_WALL_ID 2

@@ -13,12 +13,16 @@ TextureManager::TextureManager()
 
 TextureManager::~TextureManager()
 {
-    
+
 }
 
 // Private functions
 
 // Accesors
+sf::Color TextureManager::getPixel(const unsigned short textureId, const Vector2i pos)
+{
+    return this->images[textureId][pos.x + pos.y * TEXTURE_SIZE];
+}
 
 // Public functions
 void TextureManager::loadAllTextures()
@@ -32,19 +36,36 @@ void TextureManager::loadAllTextures()
     for (Json::Value& texture_info : jsonReader["paths"])
     {
         unsigned short id = static_cast<short>(texture_info["index"].asInt());
+        std::string type = texture_info["type"].asString();
         std::string path = texture_info["path"].asString();
-        
-        this->textures[id].loadFromFile(path);
-        this->sprites[id].setTexture(this->textures[id]);
+
+        if (type == "floor" || type == "ceiling")
+        {
+            sf::Image image;
+            image.loadFromFile(path);
+
+            for (int x = 0; x < TEXTURE_SIZE; x++)
+            {
+                for (int y = 0; y < TEXTURE_SIZE; y++)
+                {
+                    this->images[id][y * TEXTURE_SIZE + x] = image.getPixel(x, y);
+                }
+            }
+        }
+        else if (type == "wall" || type == "door")
+        {
+            this->textures[id].loadFromFile(path);
+            this->sprites[id].setTexture(this->textures[id]);
+        }
     }
 }
 
-void TextureManager::drawPixel(int x, int y, sf::Color color)
+void TextureManager::drawPixel(const Vector2f pos, const sf::Color color)
 {
-    this->screenBuffer.setPixel(x, y, color);
+    this->screenBuffer.setPixel(pos.x, pos.y, color);
 }
 
-void TextureManager::renderTextureLine(std::shared_ptr<sf::RenderTarget> renderTarget, unsigned short textureId, Vector2f pos, unsigned short columnX, double height, bool addShadows)
+void TextureManager::renderTextureLine(std::shared_ptr<sf::RenderTarget> renderTarget, const unsigned short textureId, const Vector2f pos, const unsigned short columnX, const double height, const bool addShadows)
 {
     this->sprites[textureId].setPosition(pos);
     this->sprites[textureId].setTextureRect(sf::IntRect(columnX, 0, 1, TEXTURE_SIZE));
@@ -57,7 +78,7 @@ void TextureManager::renderTextureLine(std::shared_ptr<sf::RenderTarget> renderT
     if (addShadows) this->sprites[textureId].setColor(sf::Color(255, 255, 255));
 }
 
-void TextureManager::renderTexture(std::shared_ptr<sf::RenderTarget> renderTarget, unsigned short textureId, Vector2f pos)
+void TextureManager::renderTexture(std::shared_ptr<sf::RenderTarget> renderTarget, const unsigned short textureId, const Vector2f pos)
 {
     this->sprites[textureId].setPosition(pos);
     this->sprites[textureId].setTextureRect(sf::IntRect(0, 0, TEXTURE_SIZE, TEXTURE_SIZE));
@@ -68,10 +89,7 @@ void TextureManager::renderTexture(std::shared_ptr<sf::RenderTarget> renderTarge
 
 void TextureManager::renderScreenBuffer(std::shared_ptr<sf::RenderTarget> renderTarget)
 {
-    this->screenTexture.update(this->screenBuffer.getPixelsPtr());
+    this->screenTexture.update(this->screenBuffer);
 
     renderTarget->draw(this->screen);
-
-    // Clear the buffer
-    this->screenBuffer.create(SCREEN_WIDTH, SCREEN_HEIGHT, sf::Color(255, 255, 255, 0));
 }

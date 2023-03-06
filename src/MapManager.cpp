@@ -44,18 +44,27 @@ void MapManager::loadMapFromJson(std::shared_ptr<Player> player)
     
     for (Json::Value& layer : jsonReader["layers"])
     {
+        unsigned short layerId;
         std::string layerName = layer["name"].asString();
-        this->map[layerName].resize(this->mapHeight);
+
+        if (layerName == "collision") layerId = MAP_COLLISION_LAYER;
+        else if (layerName == "walls") layerId = MAP_WALL_LAYER;
+        else if (layerName == "floor") layerId = MAP_FLOOR_LAYER;
+        else if (layerName == "ceiling") layerId = MAP_CEILING_LAYER;
+        else if (layerName == "player") layerId = MAP_PLAYER_LAYER;
+        
+        this->map[layerId].resize(this->mapWidth * this->mapHeight);
 
         for (unsigned short row = 0; row < this->mapHeight; row++)
         {
             for (unsigned short col = 0; col < this->mapWidth; col++)
             {
-                if (layerName != "player")
+                if (layerId != MAP_PLAYER_LAYER)
                 {
-                    this->map[layerName][row].push_back(static_cast<short>(layer["data"][row * this->mapWidth + col].asInt()));
+                    unsigned short cellId = (short)(layer["data"][row * this->mapWidth + col].asInt());
+                    this->map[layerId][row * this->mapWidth + col] = cellId;
 
-                    if (this->map[layerName][row][col] == MAP_VERTICAL_DOOR_ID || this->map[layerName][row][col] == MAP_HORIZONTAL_DOOR_ID)
+                    if (cellId == MAP_VERTICAL_DOOR_ID || cellId == MAP_HORIZONTAL_DOOR_ID)
                     {
                         DoorInfo doorInfo;
                         
@@ -94,28 +103,25 @@ unsigned short MapManager::getMapHeight()
     return this->mapHeight;
 }
 
-Vector2i MapManager::getCellPos(Vector2f pos)
+Vector2i MapManager::getCellPos(const Vector2f pos)
 {
-    return Vector2i(static_cast<int>(pos.x / CELL_SIZE), static_cast<int>(pos.y / CELL_SIZE));
+    return Vector2i(pos.x / CELL_SIZE, pos.y / CELL_SIZE);
 }
 
-short MapManager::getCellId(std::string layer, Vector2f pos)
+short MapManager::getCellId(unsigned short layerId, Vector2i pos)
 {
-    Vector2i cellPos = this->getCellPos(pos);
-
-    if (0 <= cellPos.x && this->mapWidth > cellPos.x && 0 <= cellPos.y && this->mapHeight > cellPos.y)
+    if (0 <= pos.x && pos.x < this->mapWidth && 0 <= pos.y && pos.y < this->mapHeight)
     {
-        unsigned short id = this->map[layer][cellPos.y][cellPos.x];
-        return id;
+        return this->map[layerId][pos.y * this->mapWidth + pos.x];
     }
     
-    return -1;
+    return 0;
 }
 
 /* Check if a point is in a non walkables cell */
-bool MapManager::chekPointCollision(Vector2f pos, bool checkDoorCollision)
+bool MapManager::chekPointCollision(const Vector2f pos, const bool checkDoorCollision)
 {
-    unsigned short cellId = this->getCellId("collision", pos);
+    unsigned short cellId = this->getCellId(MAP_COLLISION_LAYER, this->getCellPos(pos));
 
     if (cellId != 0)
     {
@@ -145,7 +151,7 @@ bool MapManager::chekPointCollision(Vector2f pos, bool checkDoorCollision)
 }
 
 /* Check if a rect is on walkables cells */
-bool MapManager::chekRectCollision(Vector2f pos, sf::FloatRect rect, bool checkDoorCollision)
+bool MapManager::chekRectCollision(const Vector2f pos, const sf::FloatRect rect, const bool checkDoorCollision)
 {
     // Check th four corner of the rect
     
@@ -162,7 +168,7 @@ bool MapManager::chekRectCollision(Vector2f pos, sf::FloatRect rect, bool checkD
 }
 
 /* Get position of a rect at close as possible of the non walkables cells */
-Vector2f MapManager::getNewPosition(Vector2f nextPos, Vector2f currentPos, sf::FloatRect rect)
+Vector2f MapManager::getNewPosition(Vector2f nextPos, const Vector2f currentPos, const sf::FloatRect rect)
 {
     // if cannot directly move on both axes
     if (this->chekRectCollision(nextPos, rect) == true)
@@ -219,12 +225,12 @@ void MapManager::loadMap(std::shared_ptr<Player> player)
     this->loadMapFromJson(player);
 }
 
-float MapManager::getDoorOpeningState(Vector2i cellPos)
+float MapManager::getDoorOpeningState(const Vector2i cellPos)
 {
     return this->doors[{cellPos.y, cellPos.x}].openingState;
 }
 
-void MapManager::openDoor(Vector2i doorCellPos)
+void MapManager::openDoor(const Vector2i doorCellPos)
 {
     DoorInfo& door = this->doors[{doorCellPos.y, doorCellPos.x}];
     
@@ -284,7 +290,7 @@ void MapManager::renderMap(std::shared_ptr<sf::RenderTarget> renderTarget)
     {
         for (unsigned char col = 0; col < this->mapWidth; col++)
         {
-            switch (this->map["collision"][row][col])
+            switch (this->map[MAP_COLLISION_LAYER][row * this->mapWidth + col])
             {
                 case MAP_WALL_ID:
                     this->wallCellSprite.setPosition(Vector2f(col * CELL_SIZE, row * CELL_SIZE));

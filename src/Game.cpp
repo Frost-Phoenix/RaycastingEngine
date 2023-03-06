@@ -18,7 +18,7 @@ Game::~Game()
 void Game::initWindow()
 {
     sf::ContextSettings settings;
-    settings.antialiasingLevel = 8;
+    // settings.antialiasingLevel = 8;
     
     sf::VideoMode videoMode;
     videoMode.width = SCREEN_WIDTH;

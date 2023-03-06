@@ -28,7 +28,7 @@ void Player::initVariables()
     this->rotationSpeed = 0.05;
 }
 
-void Player::checkInputs(std::shared_ptr<RayCasting> rayCastingEngine, Vector2i mousePos)
+void Player::checkInputs(std::shared_ptr<RayCasting> rayCastingEngine, const Vector2i mousePos)
 {
     // Player rotaion / view 
     char turnDir = 0;
@@ -126,8 +126,10 @@ void Player::checkActions(std::shared_ptr<MapManager> mapManager)
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
     {
         Vector2f doorPos((this->sprite.getPosition().x + this->sprite.getLocalBounds().width / 2) + this->actionRange * this->dir.x, (this->sprite.getPosition().y + this->sprite.getLocalBounds().width / 2) + this->actionRange * this->dir.y);
+
+        short checkCellId = mapManager->getCellId(MAP_COLLISION_LAYER, mapManager->getCellPos(doorPos));
         
-        if (MAP_VERTICAL_DOOR_ID == mapManager->getCellId("collision", doorPos) || MAP_HORIZONTAL_DOOR_ID == mapManager->getCellId("collision", doorPos))
+        if (MAP_VERTICAL_DOOR_ID == checkCellId || MAP_HORIZONTAL_DOOR_ID == checkCellId)
         {
             Vector2i doorCellPos = mapManager->getCellPos(doorPos);
             mapManager->openDoor(doorCellPos);
@@ -157,13 +159,13 @@ const sf::FloatRect Player::getHitbox() const
 }
 
 // Public functions
-void Player::setCenterPos(Vector2f pos)
+void Player::setCenterPos(const Vector2f pos)
 {
     sf::FloatRect playerHitbox = this->sprite.getGlobalBounds();
     this->sprite.setPosition(pos.x - (playerHitbox.width / 2), pos.y - (playerHitbox.height / 2));
 }
 
-void Player::update(std::shared_ptr<MapManager> mapManager, std::shared_ptr<RayCasting> rayCastingEngine, Vector2i mousePos)
+void Player::update(std::shared_ptr<MapManager> mapManager, std::shared_ptr<RayCasting> rayCastingEngine, const Vector2i mousePos)
 {
     this->checkInputs(rayCastingEngine, mousePos);
     this->move(mapManager);

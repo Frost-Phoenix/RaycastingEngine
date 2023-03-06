@@ -1,9 +1,9 @@
 .vscode
 bin
-data/images/tmp
 tmp.cpp
 test 
-to-do
+src/TextRenderer.cpp
+include/TextRenderer.hpp
 
 # Prerequisites
 *.d

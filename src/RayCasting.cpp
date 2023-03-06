@@ -21,7 +21,6 @@ RayCasting::~RayCasting()
 void RayCasting::castWalls(std::shared_ptr<MapManager> mapManager, const Vector2f playerPos, const Vector2i playerCellPos, const Vector2f playerDir)
 {
     RayHitInfo rayHitInfo;
-    Vector2i cellPos;
 
     for (unsigned short x = 0; x < SCREEN_WIDTH; x++)
     {
@@ -33,7 +32,7 @@ void RayCasting::castWalls(std::shared_ptr<MapManager> mapManager, const Vector2
         rayDir.y = playerDir.y + this->plane.y * cameraX;
 
         //which box of the map we're in
-        cellPos = playerCellPos;
+        Vector2i cellPos = playerCellPos;
 
         //length of ray from one x or y-side to next x or y-side 
         Vector2d deltaDist;
@@ -89,7 +88,7 @@ void RayCasting::castWalls(std::shared_ptr<MapManager> mapManager, const Vector2
             // Check ray collision
             if (mapManager->chekPointCollision(Vector2f(cellPos.x * CELL_SIZE, cellPos.y * CELL_SIZE)))
             {
-                short collideCellId = mapManager->getCellId("collision", Vector2f(cellPos.x * CELL_SIZE, cellPos.y * CELL_SIZE));
+                short collideCellId = mapManager->getCellId(MAP_COLLISION_LAYER, cellPos);
                 
                 if (collideCellId == MAP_WALL_ID)
                 {
@@ -110,7 +109,7 @@ void RayCasting::castWalls(std::shared_ptr<MapManager> mapManager, const Vector2
                         tmpRayEndPos.y = (playerPos.y + (sideDist.y + deltaDist.y / 2 - deltaDist.y) * rayDir.y) * CELL_SIZE;
                     }
                     
-                    collideCellId = mapManager->getCellId("collision", tmpRayEndPos);
+                    collideCellId = mapManager->getCellId(MAP_COLLISION_LAYER, Vector2i(tmpRayEndPos.x / CELL_SIZE, tmpRayEndPos.y / CELL_SIZE));
 
                     if (mapManager->chekPointCollision(tmpRayEndPos) && (collideCellId == MAP_HORIZONTAL_DOOR_ID || collideCellId == MAP_VERTICAL_DOOR_ID))
                     {
@@ -194,65 +193,64 @@ void RayCasting::castWalls(std::shared_ptr<MapManager> mapManager, const Vector2
 
         if (this->drawMap) this->fovVisualization[x + 1].position = rayEndPos;
         
-        rayHitInfo.textureId = mapManager->getCellId("walls", rayEndPos);
+        rayHitInfo.textureId = mapManager->getCellId(MAP_WALL_LAYER, mapManager->getCellPos(rayEndPos));
 
         this->raysHitInfos[x] = rayHitInfo;
     }
 }
 
-void RayCasting::castFloor(Vector2f playerPos, Vector2f playerDir)
+void RayCasting::castFloor(std::shared_ptr<MapManager> mapManager, const Vector2f playerPos, const Vector2f playerDir)
 {
-    sf::Color color;
+    double rayDirX0 = playerDir.x - this->plane.x;
+    double rayDirY0 = playerDir.y - this->plane.y;
+    double rayDirX1 = playerDir.x + this->plane.x;
+    double rayDirY1 = playerDir.y + this->plane.y;
 
-    // rayDir for leftmost ray (x = 0) and rightmost ray (x = w)
-    double rayDirX0 = playerDir.x + this->plane.x;
-    double rayDirY0 = playerDir.y + this->plane.y;
-    double rayDirX1 = playerDir.x - this->plane.x;
-    double rayDirY1 = playerDir.y - this->plane.y;
-
-    //FLOOR CASTING
     for(unsigned short y = 0; y < SCREEN_HEIGHT / 2; y++)
     {
-      // Current y position compared to the center of the screen (the horizon)
-      short p = y - SCREEN_HEIGHT / 2;
+        // Current y position compared to the center of the screen (the horizon)
+        short p = y - SCREEN_HEIGHT / 2;
 
-      // Vertical position of the camera.
-      double posZ = 0.5 * this->screeDist;
+        // Vertical position of the camera.
+        double posZ = 0.5 * this->screeDist;
 
-      // Horizontal distance from the camera to the floor for the current row.
-      // 0.5 is the z position exactly in the middle between floor and ceiling.
-      double rowDistance = posZ / p;
+        // Horizontal distance from the camera to the floor for the current row.
+        // 0.5 is the z position exactly in the middle between floor and ceiling.
+        double rowDistance = posZ / p;
 
-      // calculate the real world step vector we have to add for each x (parallel to camera plane)
-      // adding step by step avoids multiplications with a weight in the inner loop
-      double floorStepX = rowDistance * (rayDirX1 - rayDirX0) / SCREEN_WIDTH;
-      double floorStepY = rowDistance * (rayDirY1 - rayDirY0) / SCREEN_WIDTH;
+        Vector2d floorStep;
+        floorStep.x = rowDistance * (rayDirX0 - rayDirX1) / SCREEN_WIDTH;
+        floorStep.y = rowDistance * (rayDirY0 - rayDirY1) / SCREEN_WIDTH;
 
-      // real world coordinates of the leftmost column. This will be updated as we step to the right.
-      double floorX = -playerPos.x + rowDistance * rayDirX0;
-      double floorY = -playerPos.y + rowDistance * rayDirY0;
+        Vector2d floorPos;
+        floorPos.x = playerPos.x - rowDistance * rayDirX1;
+        floorPos.y = playerPos.y - rowDistance * rayDirY1;
 
-      for(int x = 0; x < SCREEN_WIDTH; ++x)
-      {
-        // the cell coord is simply got from the integer parts of floorX and floorY
-        short cellX = (short)(floorX);
-        short cellY = (short)(floorY);
+        for(int x = 0; x < SCREEN_WIDTH; ++x)
+        {
+            sf::Vector2i cellPos;
+            cellPos.x = (short)(floorPos.x);
+            cellPos.y = (short)(floorPos.y);
 
-        floorX += floorStepX;
-        floorY += floorStepY;
+            Vector2d deltaCell;
+            deltaCell.x = (floorPos.x - cellPos.x);
+            deltaCell.y = (floorPos.y - cellPos.y);
 
-        // Floor 
-        if ((cellX + cellY) % 2) color = sf::Color(75, 55, 25);
-        else color = sf::Color(50, 35, 0);
+            short floorCollideCellId = mapManager->getCellId(MAP_FLOOR_LAYER, cellPos);
+            short ceilingCollideCellId = mapManager->getCellId(MAP_CEILING_LAYER, cellPos);
 
-        this->textureManager->drawPixel(x, SCREEN_HEIGHT - y - 1, color);
+            if (floorCollideCellId != 0)
+            {
+                this->textureManager->drawPixel(Vector2f(x, SCREEN_HEIGHT - y - 1), this->textureManager->getPixel(floorCollideCellId, Vector2i(deltaCell.x * TEXTURE_SIZE, deltaCell.y * TEXTURE_SIZE)));
+            }
+            if (floorCollideCellId != 0)
+            {
+                this->textureManager->drawPixel(Vector2f(x, y), this->textureManager->getPixel(ceilingCollideCellId, Vector2i(deltaCell.x * TEXTURE_SIZE, deltaCell.y * TEXTURE_SIZE)));
+            }
 
-        // Ceiling 
-        if ((cellX + cellY) % 2) color = sf::Color(0, 95, 120);
-        else color = sf::Color(0, 60, 90);
-        
-        this->textureManager->drawPixel(x, y, color);
-      }
+            floorPos.x -= floorStep.x;
+            floorPos.y -= floorStep.y;
+        }
     }
 }
 
@@ -299,7 +297,7 @@ void RayCasting::update(std::shared_ptr<MapManager> mapManager, Vector2f playerP
     Vector2i playerCellPos = mapManager->getCellPos(playerPos);
     playerPos = Vector2f(playerPos.x / CELL_SIZE, playerPos.y / CELL_SIZE);
     
-    this->castFloor(playerPos, playerDir);
+    this->castFloor(mapManager, playerPos, playerDir);
     this->castWalls(mapManager, playerPos, playerCellPos, playerDir);
 }
 

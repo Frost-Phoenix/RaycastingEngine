@@ -32,7 +32,7 @@ class RayCasting
 
         // Private functions
         void castWalls(std::shared_ptr<MapManager> mapManager, const Vector2f playerPos, const Vector2i playerCellPos, const Vector2f playerDir);
-        void castFloor(Vector2f playerPos, Vector2f playerDir);
+        void castFloor(std::shared_ptr<MapManager> mapManager, const Vector2f playerPos, const Vector2f playerDir);
 
         void renderFloor(std::shared_ptr<sf::RenderWindow> renderTarget);
         void renderWalls(std::shared_ptr<sf::RenderWindow> renderTarget);

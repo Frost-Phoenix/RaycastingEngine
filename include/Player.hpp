@@ -25,7 +25,7 @@ class Player
         void initSprite();
         void initVariables();
 
-        void checkInputs(std::shared_ptr<RayCasting> rayCastingEngine, Vector2i mousePos);
+        void checkInputs(std::shared_ptr<RayCasting> rayCastingEngine, const Vector2i mousePos);
         void move(std::shared_ptr<MapManager> mapManager);
         void checkActions(std::shared_ptr<MapManager> mapManager);
 
@@ -43,8 +43,8 @@ class Player
         const sf::FloatRect getHitbox() const;
 
         // Public functions
-        void setCenterPos(Vector2f pos);
+        void setCenterPos(const Vector2f pos);
         
-        void update(std::shared_ptr<MapManager> mapManager, std::shared_ptr<RayCasting> rayCasting, Vector2i mousePos);
+        void update(std::shared_ptr<MapManager> mapManager, std::shared_ptr<RayCasting> rayCasting, const Vector2i mousePos);
         void render(std::shared_ptr<sf::RenderTarget> renderTarget);
 };
