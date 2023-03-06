@@ -40,6 +40,21 @@ A simple raycasting engine including :
 - ~~Add mouse control~~
 - Improve movement feels
 
+## Controls
+
+#### Move
+
+Move with the `Z Q S D` keys, 8 direction movement
+Holding the `shift` key while moving for sprinting
+
+#### Turn view
+
+`left` and `right` arrows to turn the view (mouse currently disabled)
+
+#### Interact
+
+Open doors with the `space` key
+
 ## Build
 
 #### Dependencies
