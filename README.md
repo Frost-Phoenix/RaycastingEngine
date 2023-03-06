@@ -39,3 +39,17 @@ A simple raycasting engine including :
 #### Other
 - ~~Add mouse control~~
 - Improve movement feels
+
+## Build
+
+#### Dependencies
+
+###### Ubuntu / Debian
+
+    sudo apt-get install build-essential libsfml-dev
+
+#### Clone and build
+
+    git clone https://github.com/Frost-Phoenix/RaycastingEngine.git
+    cd RaycastingEngine
+    make compile run
