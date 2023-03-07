@@ -44,8 +44,8 @@ A simple raycasting engine including :
 
 #### Move
 
-Move with the `Z Q S D` keys, 8 direction movement
-Holding the `shift` key while moving for sprinting
+Move with the `Z Q S D` keys, 8 direction movement.
+Holding the `shift` key while moving for sprinting.
 
 #### Turn view
 
@@ -53,7 +53,7 @@ Holding the `shift` key while moving for sprinting
 
 #### Interact
 
-Open doors with the `space` key
+Open doors with the `space` key.
 
 ## Build
 

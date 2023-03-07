@@ -34,7 +34,7 @@ class MapManager
         sf::Sprite horizontalDoorCellSprite;
 
         // Variables
-        std::map<unsigned short, std::vector<unsigned short>> map;
+        std::array<std::vector<unsigned short>, NB_LAYERS> map;
         std::map<std::tuple<unsigned short, unsigned short>, DoorInfo> doors;
         unsigned short mapHeight;
         unsigned short mapWidth;

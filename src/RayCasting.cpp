@@ -18,11 +18,11 @@ RayCasting::~RayCasting()
     
 }
 
-void RayCasting::castWalls(std::shared_ptr<MapManager> mapManager, const Vector2f playerPos, const Vector2i playerCellPos, const Vector2f playerDir)
+void RayCasting::castWalls(std::shared_ptr<MapManager> mapManager, const Vector2f playerPos, const Vector2i playerCellPos, const Vector2f playerDir, const unsigned short startX, const unsigned short stopX)
 {
     RayHitInfo rayHitInfo;
 
-    for (unsigned short x = 0; x < SCREEN_WIDTH; x++)
+    for (unsigned short x = startX; x < stopX; x++)
     {
         //calculate ray position and direction
         double cameraX = 2 * (SCREEN_WIDTH - x) / (double)SCREEN_WIDTH - 1; //x-coordinate in camera space
@@ -199,14 +199,14 @@ void RayCasting::castWalls(std::shared_ptr<MapManager> mapManager, const Vector2
     }
 }
 
-void RayCasting::castFloor(std::shared_ptr<MapManager> mapManager, const Vector2f playerPos, const Vector2f playerDir)
+void RayCasting::castFloor(std::shared_ptr<MapManager> mapManager, const Vector2f playerPos, const Vector2f playerDir, const unsigned short startY, const unsigned short stopY)
 {
     double rayDirX0 = playerDir.x - this->plane.x;
     double rayDirY0 = playerDir.y - this->plane.y;
     double rayDirX1 = playerDir.x + this->plane.x;
     double rayDirY1 = playerDir.y + this->plane.y;
 
-    for(unsigned short y = 0; y < SCREEN_HEIGHT / 2; y++)
+    for(unsigned short y = startY; y < stopY; y++)
     {
         // Current y position compared to the center of the screen (the horizon)
         short p = y - SCREEN_HEIGHT / 2;
@@ -296,9 +296,20 @@ void RayCasting::update(std::shared_ptr<MapManager> mapManager, Vector2f playerP
 
     Vector2i playerCellPos = mapManager->getCellPos(playerPos);
     playerPos = Vector2f(playerPos.x / CELL_SIZE, playerPos.y / CELL_SIZE);
-    
-    this->castFloor(mapManager, playerPos, playerDir);
-    this->castWalls(mapManager, playerPos, playerCellPos, playerDir);
+
+    // Floor
+    std::thread castFloorThread1(&RayCasting::castFloor, this, mapManager, playerPos, playerDir, 0, SCREEN_HEIGHT / 4);
+    std::thread castFloorThread2(&RayCasting::castFloor, this, mapManager, playerPos, playerDir, SCREEN_HEIGHT / 4, SCREEN_HEIGHT / 2);
+
+    castFloorThread1.join();
+    castFloorThread2.join();
+
+    // Walls
+    std::thread castWallsThread1(&RayCasting::castWalls, this, mapManager, playerPos, playerCellPos, playerDir, 0, SCREEN_WIDTH / 2);
+    std::thread castWallsThread2(&RayCasting::castWalls, this, mapManager, playerPos, playerCellPos, playerDir, SCREEN_WIDTH / 2, SCREEN_WIDTH);
+
+    castWallsThread1.join();
+    castWallsThread2.join();
 }
 
 void RayCasting::renderFovVisualisation(std::shared_ptr<sf::RenderTarget> renderTarget)

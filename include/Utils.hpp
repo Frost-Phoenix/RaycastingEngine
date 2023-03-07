@@ -9,6 +9,7 @@ typedef sf::Vector2<double> Vector2d;
 #define TEXTURE_SIZE 64
 #define SCREEN_WIDTH  960
 #define SCREEN_HEIGHT 540
+#define NB_LAYERS 4
 
 constexpr unsigned short FOV = 70;
 constexpr unsigned short MAX_RAY_LEGHT = 100;

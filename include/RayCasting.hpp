@@ -31,8 +31,8 @@ class RayCasting
         std::array<RayHitInfo, SCREEN_WIDTH> raysHitInfos;
 
         // Private functions
-        void castWalls(std::shared_ptr<MapManager> mapManager, const Vector2f playerPos, const Vector2i playerCellPos, const Vector2f playerDir);
-        void castFloor(std::shared_ptr<MapManager> mapManager, const Vector2f playerPos, const Vector2f playerDir);
+        void castWalls(std::shared_ptr<MapManager> mapManager, const Vector2f playerPos, const Vector2i playerCellPos, const Vector2f playerDir, const unsigned short startX, const unsigned short stopX);
+        void castFloor(std::shared_ptr<MapManager> mapManager, const Vector2f playerPos, const Vector2f playerDir, const unsigned short startY, const unsigned short stopY);
 
         void renderFloor(std::shared_ptr<sf::RenderWindow> renderTarget);
         void renderWalls(std::shared_ptr<sf::RenderWindow> renderTarget);

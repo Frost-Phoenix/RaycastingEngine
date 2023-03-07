@@ -53,7 +53,7 @@ void MapManager::loadMapFromJson(std::shared_ptr<Player> player)
         else if (layerName == "ceiling") layerId = MAP_CEILING_LAYER;
         else if (layerName == "player") layerId = MAP_PLAYER_LAYER;
         
-        this->map[layerId].resize(this->mapWidth * this->mapHeight);
+        if (layerId != MAP_PLAYER_LAYER) this->map[layerId].resize(this->mapWidth * this->mapHeight);
 
         for (unsigned short row = 0; row < this->mapHeight; row++)
         {
