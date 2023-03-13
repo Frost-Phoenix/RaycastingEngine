@@ -17,15 +17,15 @@ class TextRenderer
         
     public:
         // Constructor
-        TextRenderer(const std::string fontPath = "data/font/upheavtt.ttf", const unsigned short& size = 20);
+        TextRenderer(const std::string fontPath = "data/font/upheavtt.ttf", const unsigned short size = 20);
         ~TextRenderer();
 
         // Accesors
 
         // Public functions
-        void setTextSize(const unsigned short& size);
-        void setTextColor(const sf::Color& color);
-        void setTextPosition(const Vector2f& pos);
+        void setTextSize(const unsigned short size);
+        void setTextColor(const sf::Color &color);
+        void setTextPosition(const Vector2f &pos);
         
-        void renderTxt(std::shared_ptr<sf::RenderTarget> renderTarget, const std::string& txt);
+        void renderTxt(std::shared_ptr<sf::RenderTarget> renderTarget, const std::string &txt);
 };

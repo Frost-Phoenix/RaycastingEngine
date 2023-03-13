@@ -5,7 +5,7 @@
 RayCasting::RayCasting(bool drawMap)
 {
     this->plane = Vector2f(0, 0.7);
-    this->screeDist = (SCREEN_WIDTH / 2) / std::tan(decToRad(FOV / 2));
+    this->screenDist = (SCREEN_WIDTH / 2) / std::tan(decToRad(FOV / 2));
     
     this->drawMap = drawMap;
     if (drawMap) this->fovVisualization = sf::VertexArray(sf::TriangleFan, SCREEN_WIDTH + 1);
@@ -38,8 +38,6 @@ void RayCasting::castWalls(std::shared_ptr<MapManager> mapManager, const Vector2
         Vector2d deltaDist;
         deltaDist.x = (rayDir.x == 0) ? 1e30 : std::abs(1 / rayDir.x);
         deltaDist.y = (rayDir.y == 0) ? 1e30 : std::abs(1 / rayDir.y);
-
-        //what direction to step in x or y-direction (either +1 or -1)
 
         Vector2i step;
         Vector2d sideDist;
@@ -212,7 +210,7 @@ void RayCasting::castFloor(std::shared_ptr<MapManager> mapManager, const Vector2
         short p = y - SCREEN_HEIGHT / 2;
 
         // Vertical position of the camera.
-        double posZ = 0.5 * this->screeDist;
+        double posZ = 0.5 * this->screenDist;
 
         // Horizontal distance from the camera to the floor for the current row.
         // 0.5 is the z position exactly in the middle between floor and ceiling.
@@ -254,19 +252,19 @@ void RayCasting::castFloor(std::shared_ptr<MapManager> mapManager, const Vector2
     }
 }
 
-void RayCasting::renderFloor(std::shared_ptr<sf::RenderWindow> renderTarget)
+void RayCasting::renderFloor(std::shared_ptr<sf::RenderTarget> renderTarget)
 {
     this->textureManager->renderScreenBuffer(renderTarget);
 }
 
-void RayCasting::renderWalls(std::shared_ptr<sf::RenderWindow> renderTarget)
+void RayCasting::renderWalls(std::shared_ptr<sf::RenderTarget> renderTarget)
 {
     for (unsigned short x = 0; x < SCREEN_WIDTH; x++)
     {
         RayHitInfo rayHitInfo = this->raysHitInfos[x];
         
         //Calculate height of line to draw on screen
-        short lineHeight = (this->screeDist / rayHitInfo.length);
+        short lineHeight = (this->screenDist / rayHitInfo.length);
 
         //calculate lowest pixel to fill in current stripe
         short drawStart = (SCREEN_HEIGHT / 2 - lineHeight / 2);
@@ -317,7 +315,7 @@ void RayCasting::renderFovVisualisation(std::shared_ptr<sf::RenderTarget> render
     renderTarget->draw(this->fovVisualization);
 }
 
-void RayCasting::render(std::shared_ptr<sf::RenderWindow> renderTarget)
+void RayCasting::render(std::shared_ptr<sf::RenderTarget> renderTarget)
 {
     this->renderFloor(renderTarget);
     this->renderWalls(renderTarget);

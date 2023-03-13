@@ -26,7 +26,7 @@ class RayCasting
 
         // Variables
         bool drawMap;
-        double screeDist;
+        double screenDist;
         Vector2f plane; // projection plane
         std::array<RayHitInfo, SCREEN_WIDTH> raysHitInfos;
 
@@ -34,8 +34,8 @@ class RayCasting
         void castWalls(std::shared_ptr<MapManager> mapManager, const Vector2f playerPos, const Vector2i playerCellPos, const Vector2f playerDir, const unsigned short startX, const unsigned short stopX);
         void castFloor(std::shared_ptr<MapManager> mapManager, const Vector2f playerPos, const Vector2f playerDir, const unsigned short startY, const unsigned short stopY);
 
-        void renderFloor(std::shared_ptr<sf::RenderWindow> renderTarget);
-        void renderWalls(std::shared_ptr<sf::RenderWindow> renderTarget);
+        void renderFloor(std::shared_ptr<sf::RenderTarget> renderTarget);
+        void renderWalls(std::shared_ptr<sf::RenderTarget> renderTarget);
         
     public:
         // Constructor
@@ -51,5 +51,5 @@ class RayCasting
         void update(std::shared_ptr<MapManager> mapManager, Vector2f playerPos, const Vector2f playerDir);
 
         void renderFovVisualisation(std::shared_ptr<sf::RenderTarget> renderTarget);
-        void render(std::shared_ptr<sf::RenderWindow> renderTarget);
+        void render(std::shared_ptr<sf::RenderTarget> renderTarget);
 };

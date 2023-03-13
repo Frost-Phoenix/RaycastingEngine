@@ -2,7 +2,7 @@
 
 
 // Constructor
-TextRenderer::TextRenderer(const std::string fontPath, const unsigned short& size)
+TextRenderer::TextRenderer(const std::string fontPath, const unsigned short size)
 {
     this->font.loadFromFile(fontPath);
 
@@ -20,7 +20,7 @@ TextRenderer::~TextRenderer()
 // Accesors
 
 // Public functions
-void TextRenderer::setTextSize(const unsigned short& size)
+void TextRenderer::setTextSize(const unsigned short size)
 {
     this->text.setCharacterSize(size);
 }

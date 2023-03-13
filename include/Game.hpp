@@ -33,7 +33,6 @@ class Game
         void pollEvents();
         void updateDeltaTime();
 
-        void updateMouse();
         void drawMiniMap();
 
     public:
@@ -43,6 +42,7 @@ class Game
 
         // Accesors
         const bool isRunning() const;
+        const unsigned short getMousePosX() const;
 
         // Public functions
         void update();

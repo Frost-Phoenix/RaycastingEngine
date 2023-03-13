@@ -25,5 +25,4 @@ constexpr unsigned short MAX_RAY_LEGHT = 100;
 #define MAP_HORIZONTAL_DOOR_ID 3
 #define MAP_VERTICAL_DOOR_ID 4
 
-float get_degrees(float i_degrees);
-double decToRad(double degrees);
+const double decToRad(double degrees);

@@ -17,16 +17,13 @@ Game::~Game()
 // Private functions
 void Game::initWindow()
 {
-    sf::ContextSettings settings;
-    // settings.antialiasingLevel = 8;
-    
     sf::VideoMode videoMode;
     videoMode.width = SCREEN_WIDTH;
     videoMode.height = SCREEN_HEIGHT;
     
     sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
     
-    this->window = std::shared_ptr<sf::RenderWindow>(new sf::RenderWindow(videoMode, "Game", sf::Style::Titlebar | sf::Style::Close, settings));
+    this->window = std::shared_ptr<sf::RenderWindow>(new sf::RenderWindow(videoMode, "Game", sf::Style::Titlebar | sf::Style::Close));
     this-> window->setPosition(Vector2i(desktop.width / 2 - window->getSize().x / 2, desktop.height / 2 - window->getSize().y / 2));
 
     this->window->setMouseCursorVisible(false);
@@ -70,9 +67,9 @@ void Game::updateDeltaTime()
     this->window->setTitle("Game - " + std::to_string(static_cast<int>(1000000 / this->clock.restart().asMicroseconds())) + " fps");
 }
 
-void Game::updateMouse()
+const unsigned short Game::getMousePosX() const
 {
-    short mousePosX = sf::Mouse::getPosition(*this->window.get()).x;
+    return sf::Mouse::getPosition(*this->window.get()).x;
 }
 
 void Game::drawMiniMap()
@@ -108,9 +105,11 @@ void Game::update()
     {
         this->updateDeltaTime();
         this->mapManager->update(this->player);
-        this->player->update(this->mapManager, this->rayCastingEngine, sf::Mouse::getPosition(*this->window.get()));
+        this->player->update(this->mapManager, this->rayCastingEngine, this->getMousePosX());
         this->rayCastingEngine->update(this->mapManager, this->player->getCenterPos(), this->player->getDir());
     }
+
+    sf::Mouse::setPosition(Vector2i(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), *this->window.get());
 }
 
 void Game::render()

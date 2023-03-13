@@ -55,20 +55,20 @@ class MapManager
         ~MapManager();
 
         // Accesors
-        unsigned short getMapWidth();
-        unsigned short getMapHeight();
-        Vector2i getCellPos(const Vector2f pos);
-        short getCellId(unsigned short layerId, const Vector2i pos);
-        float getDoorOpeningState(const Vector2i cellPos);
+        const unsigned short getMapWidth() const;
+        const unsigned short getMapHeight() const;
+        const Vector2i getCellPos(const Vector2f &pos) const;
+        const short getCellId(const unsigned short layerId, const Vector2i &pos) const;
+        const float getDoorOpeningState(const Vector2i& cellPos);
 
         // Public functions
         void loadMap(std::shared_ptr<Player> player);
         
         bool chekPointCollision(const Vector2f pos, const bool checkDoorCollision = false);
         bool chekRectCollision(const Vector2f pos, const sf::FloatRect rect, const bool checkDoorCollision = false);
-        Vector2f getNewPosition(const Vector2f nextPos, const Vector2f currentPos, const sf::FloatRect rect);
+        Vector2f getNewPosition(Vector2f &nextPos, const Vector2f &currentPos, const sf::FloatRect &rect);
 
-        void openDoor(Vector2i doorCellPos);
+        void openDoor(const Vector2i &doorCellPos);
         
         void update(std::shared_ptr<Player> player);
         void render(std::shared_ptr<sf::RenderTarget> renderTarget);

@@ -93,22 +93,22 @@ void MapManager::loadMapFromJson(std::shared_ptr<Player> player)
 }
 
 // Accesors
-unsigned short MapManager::getMapWidth()
+const unsigned short MapManager::getMapWidth() const
 {
     return this->mapWidth;
 }
 
-unsigned short MapManager::getMapHeight()
+const unsigned short MapManager::getMapHeight() const
 {
     return this->mapHeight;
 }
 
-Vector2i MapManager::getCellPos(const Vector2f pos)
+const Vector2i MapManager::getCellPos(const Vector2f &pos) const
 {
     return Vector2i(pos.x / CELL_SIZE, pos.y / CELL_SIZE);
 }
 
-short MapManager::getCellId(unsigned short layerId, Vector2i pos)
+const short MapManager::getCellId(const unsigned short layerId, const Vector2i &pos) const
 {
     if (0 <= pos.x && pos.x < this->mapWidth && 0 <= pos.y && pos.y < this->mapHeight)
     {
@@ -168,7 +168,7 @@ bool MapManager::chekRectCollision(const Vector2f pos, const sf::FloatRect rect,
 }
 
 /* Get position of a rect at close as possible of the non walkables cells */
-Vector2f MapManager::getNewPosition(Vector2f nextPos, const Vector2f currentPos, const sf::FloatRect rect)
+Vector2f MapManager::getNewPosition(Vector2f &nextPos, const Vector2f &currentPos, const sf::FloatRect &rect)
 {
     // if cannot directly move on both axes
     if (this->chekRectCollision(nextPos, rect) == true)
@@ -225,12 +225,12 @@ void MapManager::loadMap(std::shared_ptr<Player> player)
     this->loadMapFromJson(player);
 }
 
-float MapManager::getDoorOpeningState(const Vector2i cellPos)
+const float MapManager::getDoorOpeningState(const Vector2i &cellPos) 
 {
     return this->doors[{cellPos.y, cellPos.x}].openingState;
 }
 
-void MapManager::openDoor(const Vector2i doorCellPos)
+void MapManager::openDoor(const Vector2i &doorCellPos)
 {
     DoorInfo& door = this->doors[{doorCellPos.y, doorCellPos.x}];
     

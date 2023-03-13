@@ -4,7 +4,7 @@ compile:
 	rm -f *.o
 	rm -f bin/main
 	mkdir -p bin
-	g++ -c src/*.cpp include/lib/jsoncpp.cpp -I"include" -I"include/lib" -I"include/pch" -O2
+	g++ -c src/*.cpp include/lib/jsoncpp.cpp -I"include" -I"include/lib" -I"include/pch" -O1 
 	g++ *.o -o bin/main -lsfml-graphics -lsfml-window -lsfml-system 
 	rm -f *.o 
 

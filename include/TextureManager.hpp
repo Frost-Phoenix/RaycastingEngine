@@ -26,12 +26,12 @@ class TextureManager
         ~TextureManager();
 
         // Accesors
-        sf::Color getPixel(const unsigned short textureId, const Vector2i pos);
+        const sf::Color& getPixel(const unsigned short textureId, const Vector2i& pos);
 
         // Public functions
         void loadAllTextures();
-        void drawPixel(const Vector2f pos, const sf::Color color);
-        void renderTextureLine(std::shared_ptr<sf::RenderTarget> renderTarget, const unsigned short textureId, const Vector2f pos, const unsigned short columnX, const double height, const bool addShadows);
-        void renderTexture(std::shared_ptr<sf::RenderTarget> renderTarget, const unsigned short textureId, const Vector2f pos);
+        void drawPixel(const Vector2f &pos, const sf::Color &color);
+        void renderTextureLine(std::shared_ptr<sf::RenderTarget> renderTarget, const unsigned short textureId, const Vector2f &pos, const unsigned short columnX, const double height, const bool addShadows);
+        void renderTexture(std::shared_ptr<sf::RenderTarget> renderTarget, const unsigned short textureId, const Vector2f &pos);
         void renderScreenBuffer(std::shared_ptr<sf::RenderTarget> renderTarget);
 };

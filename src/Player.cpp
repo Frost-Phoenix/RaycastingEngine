@@ -28,13 +28,18 @@ void Player::initVariables()
     this->rotationSpeed = 0.05;
 }
 
-void Player::checkInputs(std::shared_ptr<RayCasting> rayCastingEngine, const Vector2i mousePos)
+void Player::checkInputs(std::shared_ptr<RayCasting> rayCastingEngine, const unsigned short mousePosX)
 {
     // Player rotaion / view 
-    char turnDir = 0;
+    double turnDir = 0;
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) turnDir = -1;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) turnDir = 1;
+    turnDir += (mousePosX - SCREEN_WIDTH / 2.f) / 5.f;
+
+    if (turnDir == 0)
+    {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) turnDir = -1;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) turnDir = 1;
+    }
 
     if (turnDir != 0)
     {
@@ -159,15 +164,15 @@ const sf::FloatRect Player::getHitbox() const
 }
 
 // Public functions
-void Player::setCenterPos(const Vector2f pos)
+void Player::setCenterPos(const Vector2f &pos)
 {
     sf::FloatRect playerHitbox = this->sprite.getGlobalBounds();
     this->sprite.setPosition(pos.x - (playerHitbox.width / 2), pos.y - (playerHitbox.height / 2));
 }
 
-void Player::update(std::shared_ptr<MapManager> mapManager, std::shared_ptr<RayCasting> rayCastingEngine, const Vector2i mousePos)
+void Player::update(std::shared_ptr<MapManager> mapManager, std::shared_ptr<RayCasting> rayCastingEngine, const unsigned short mousePosX)
 {
-    this->checkInputs(rayCastingEngine, mousePos);
+    this->checkInputs(rayCastingEngine, mousePosX);
     this->move(mapManager);
     this->checkActions(mapManager);
 }

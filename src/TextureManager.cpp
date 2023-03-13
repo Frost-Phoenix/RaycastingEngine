@@ -19,7 +19,7 @@ TextureManager::~TextureManager()
 // Private functions
 
 // Accesors
-sf::Color TextureManager::getPixel(const unsigned short textureId, const Vector2i pos)
+const sf::Color& TextureManager::getPixel(const unsigned short textureId, const Vector2i &pos)
 {
     return this->images[textureId][pos.x + pos.y * TEXTURE_SIZE];
 }
@@ -60,12 +60,12 @@ void TextureManager::loadAllTextures()
     }
 }
 
-void TextureManager::drawPixel(const Vector2f pos, const sf::Color color)
+void TextureManager::drawPixel(const Vector2f &pos, const sf::Color &color)
 {
     this->screenBuffer.setPixel(pos.x, pos.y, color);
 }
 
-void TextureManager::renderTextureLine(std::shared_ptr<sf::RenderTarget> renderTarget, const unsigned short textureId, const Vector2f pos, const unsigned short columnX, const double height, const bool addShadows)
+void TextureManager::renderTextureLine(std::shared_ptr<sf::RenderTarget> renderTarget, const unsigned short textureId, const Vector2f &pos, const unsigned short columnX, const double height, const bool addShadows)
 {
     this->sprites[textureId].setPosition(pos);
     this->sprites[textureId].setTextureRect(sf::IntRect(columnX, 0, 1, TEXTURE_SIZE));
@@ -78,7 +78,7 @@ void TextureManager::renderTextureLine(std::shared_ptr<sf::RenderTarget> renderT
     if (addShadows) this->sprites[textureId].setColor(sf::Color(255, 255, 255));
 }
 
-void TextureManager::renderTexture(std::shared_ptr<sf::RenderTarget> renderTarget, const unsigned short textureId, const Vector2f pos)
+void TextureManager::renderTexture(std::shared_ptr<sf::RenderTarget> renderTarget, const unsigned short textureId, const Vector2f &pos)
 {
     this->sprites[textureId].setPosition(pos);
     this->sprites[textureId].setTextureRect(sf::IntRect(0, 0, TEXTURE_SIZE, TEXTURE_SIZE));
@@ -89,7 +89,7 @@ void TextureManager::renderTexture(std::shared_ptr<sf::RenderTarget> renderTarge
 
 void TextureManager::renderScreenBuffer(std::shared_ptr<sf::RenderTarget> renderTarget)
 {
-    this->screenTexture.update(this->screenBuffer);
+    this->screenTexture.update(this->screenBuffer.getPixelsPtr());
 
     renderTarget->draw(this->screen);
 }
