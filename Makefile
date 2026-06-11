@@ -1,12 +1,15 @@
-all: compile run
+all: amalgamate compile run
+
+amalgamate:
+	cd lib/jsoncpp && ./amalgamate.py
 
 compile:
 	rm -f *.o
 	rm -f bin/main
 	mkdir -p bin
-	g++ -c src/*.cpp include/lib/jsoncpp.cpp -I"include" -I"include/lib" -I"include/pch" -O1 
-	g++ *.o -o bin/main -lsfml-graphics -lsfml-window -lsfml-system 
-	rm -f *.o 
+	g++ -c src/*.cpp lib/jsoncpp/dist/jsoncpp.cpp -I"include" -I"include/pch" -I"lib/jsoncpp/dist/json" -O1
+	g++ *.o -o bin/main -lsfml-graphics -lsfml-window -lsfml-system
+	rm -f *.o
 
 pch:
 	g++ include/pch/pch.hpp -I"include/lib" 
