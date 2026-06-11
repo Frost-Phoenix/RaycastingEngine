@@ -35,7 +35,7 @@ void Game::initWindow()
 
 void Game::initVariables()
 {
-    this->isFocus = false;
+    this->isFocus = true;
     
     this->showMiniMap = true;
     // this->showMiniMap = false;
